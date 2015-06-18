@@ -1,56 +1,31 @@
 $(function() {	
 	var user = new UserModel();
 	var userview = new UserView({model:user});
-	var versions = new VersionCollection();
+	var rankfields = new RankFieldCollection();
 		
 	var AppView = Backbone.View.extend({
 		el: $('#ranktoolapp'),
 		
-		getVersions: function() {
-			$.ajax({
-				type: 'GET',
-				url: 'http://jira.freewheel.tv/rest/api/2/project/OPP/versions',
-				contentType: 'application/json',
-			}).done(function(data) {
-				var foundVersions = [];
-				
-				for (var i = 0; i < data.length; ++i) {
-					var jVersion = data[i];
-					var arr = jVersion.name.split('.', 3);
-					var ver_major = arr[0];
-					var ver_minor = arr[1];
-					var ver_point = arr[2] || 0;
-					var start = moment(jVersion.startDate);
-					var end = moment(jVersion.releaseDate);
-					
-					if (ver_point == 0) {
-						foundVersions.push(new VersionModel({
-							major: ver_major,
-							minor: ver_minor,
-							point: ver_point,
-							date_start: start,
-							date_end: end
-						}));
-					
-						console.debug("Got ver: " + ver_major + "." + ver_minor + "." + ver_point);
-					}
-				}
-				
-				versions.add(foundVersions);
-			});
-		},
-		
 		getCustomFields: function() {
+			// Fetch custom fields and add PM rank fields to our collectino
 			$.ajax({
 				type: 'GET',
 				url: 'http://jira.freewheel.tv/rest/api/2/field',
 				contentType: 'application/json'
-			}).done(function(data) {
-				var allFields = JSON.parse(data);
-				for (var fieldRec in allFields) {
-					console.log(fieldRec.name);
+			}).done(function(fieldarr) {
+				for (var i = 0; i < fieldarr.length; ++i) {
+					var fieldrec = fieldarr[i];
+					if (fieldrec.name.startsWith("Rank - ")) {
+						console.debug("Got rank field " + fieldrec.name);
+						rankfields.add({id:fieldrec.id, queryid:fieldrec.clauseNames[0], name:fieldrec.name});
+					}
 				}
 			});
+		},
+		
+		addRankField: function(rankfield) {
+			var el_select = this.$el.find('select#rankfield_select');
+			el_select.append('<option value="' + rankfield.get("id") + '">' + rankfield.get("name").substr(7) + '</option>');
 		},
 		
 		initialize: function() {
@@ -60,11 +35,13 @@ $(function() {
 				if (user.hasChanged("validated") && user.get("validated")) {
 					console.log("User is validated!");
 					userview.render();
-					this.getVersions();
+					this.getCustomFields();
 				}
 			}, this);
 			
-			user.validate();
+			this.listenTo(rankfields, 'add', this.addRankField);
+			
+			user.validate(); // Initial validation
 		},
 	});
 
