@@ -1,0 +1,19 @@
+{
+	"manifest_version": 2,
+
+	"name": "PM Rank Tool",
+	"description": "Tool for helping with scoping ranks",
+	"version": "0.1",
+
+	"app": {
+		"background": {
+			"scripts": ["background.js"]
+		}
+	},
+
+	"permissions": [
+		"http://jira.freewheel.tv/*",
+		"http://code.jquery.com/*",
+		"storage"
+	]
+}

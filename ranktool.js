@@ -1,43 +1,72 @@
-$(function() {
-	var Fdb = Backbone.Model.extend({
-		defaults: function() {
-		    return {
-			key: "FDB-0000",
-			title: "Unknown FDB",
-			order: 0
-		    }
-		}
-	    });
-
-	var FdbList = Backbone.Collection.extend({
-		model: Fdb,
-		comparator: 'order'
-	    });
-
-	var Fdbs = new FdbList();
-
-	var FdbView = Backbone.View.extend({
-		tagName: "li",
-		render: function() {
-		    this.$el.html(this.model.title)
-		}
-	    });
-
+$(function() {	
+	var user = new UserModel();
+	var userview = new UserView({model:user});
+	var versions = new VersionCollection();
+		
 	var AppView = Backbone.View.extend({
 		el: $('#ranktoolapp'),
-
-		events: {
-		    "click #jira_login": "hello"
+		
+		getVersions: function() {
+			$.ajax({
+				type: 'GET',
+				url: 'http://jira.freewheel.tv/rest/api/2/project/OPP/versions',
+				contentType: 'application/json',
+			}).done(function(data) {
+				var foundVersions = [];
+				
+				for (var i = 0; i < data.length; ++i) {
+					var jVersion = data[i];
+					var arr = jVersion.name.split('.', 3);
+					var ver_major = arr[0];
+					var ver_minor = arr[1];
+					var ver_point = arr[2] || 0;
+					var start = moment(jVersion.startDate);
+					var end = moment(jVersion.releaseDate);
+					
+					if (ver_point == 0) {
+						foundVersions.push(new VersionModel({
+							major: ver_major,
+							minor: ver_minor,
+							point: ver_point,
+							date_start: start,
+							date_end: end
+						}));
+					
+						console.debug("Got ver: " + ver_major + "." + ver_minor + "." + ver_point);
+					}
+				}
+				
+				versions.add(foundVersions);
+			});
 		},
-
-		render: function() {
-		    
+		
+		getCustomFields: function() {
+			$.ajax({
+				type: 'GET',
+				url: 'http://jira.freewheel.tv/rest/api/2/field',
+				contentType: 'application/json'
+			}).done(function(data) {
+				var allFields = JSON.parse(data);
+				for (var fieldRec in allFields) {
+					console.log(fieldRec.name);
+				}
+			});
 		},
+		
+		initialize: function() {
+			// Get custom fields
 
-		hello: function() {
-		    console.log("Hello, world!");
-		}
-	    });
+			user.on("change", function() {
+				if (user.hasChanged("validated") && user.get("validated")) {
+					console.log("User is validated!");
+					userview.render();
+					this.getVersions();
+				}
+			}, this);
+			
+			user.validate();
+		},
+	});
 
 	var app = new AppView();
     });
