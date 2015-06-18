@@ -28,17 +28,16 @@ $(function() {
 			el_select.append('<option value="' + rankfield.get("id") + '">' + rankfield.get("name").substr(7) + '</option>');
 		},
 		
+		checkUserValidation: function() {
+			if (user.hasChanged("validated") && user.get("validated")) {
+				console.log("User is validated!");
+				userview.render();
+				this.getCustomFields();
+			}
+		},
+		
 		initialize: function() {
-			// Get custom fields
-
-			user.on("change", function() {
-				if (user.hasChanged("validated") && user.get("validated")) {
-					console.log("User is validated!");
-					userview.render();
-					this.getCustomFields();
-				}
-			}, this);
-			
+			this.listenTo(user, "change", this.checkUserValidation);
 			this.listenTo(rankfields, 'add', this.addRankField);
 			
 			user.validate(); // Initial validation
