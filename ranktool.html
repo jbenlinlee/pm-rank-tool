@@ -9,9 +9,13 @@
 	Password: <input type="password" id="jira_pass"></input>
 	</div>
 	
-	<div id="rank_selector">
-		<select id="rankfield_select">
-		</select>
+	<div id="opp_input">
+		<div>
+			Add OPP-<input type="text" id="opp_input_key">
+		</div>
+		<div>
+			Add from rank: <select id="opp_input_rank"></select>
+		</div>
 	</div>
 </div>
 
@@ -20,6 +24,7 @@
 <script src="backbone-min.js"></script>
 <script src="moment.js"></script>
 <script src="user.js"></script>
+<script src="jira_opp.js"></script>
 <script src="rankfield.js"></script>
 <script src="ranktool.js"></script>
 </body>

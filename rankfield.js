@@ -11,3 +11,4 @@ var RankField = Backbone.Model.extend({
 var RankFieldCollection = Backbone.Collection.extend({
 	model: RankField
 });
+

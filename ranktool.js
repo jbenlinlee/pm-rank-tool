@@ -2,6 +2,8 @@ $(function() {
 	var user = new UserModel();
 	var userview = new UserView({model:user});
 	var rankfields = new RankFieldCollection();
+	
+	var oppInputView = new OPPInputView();
 		
 	var AppView = Backbone.View.extend({
 		el: $('#ranktoolapp'),
@@ -24,7 +26,7 @@ $(function() {
 		},
 		
 		addRankField: function(rankfield) {
-			var el_select = this.$el.find('select#rankfield_select');
+			var el_select = this.$el.find('select#opp_input_rank');
 			el_select.append('<option value="' + rankfield.get("id") + '">' + rankfield.get("name").substr(7) + '</option>');
 		},
 		
@@ -41,6 +43,16 @@ $(function() {
 			this.listenTo(rankfields, 'add', this.addRankField);
 			
 			user.validate(); // Initial validation
+			
+			var el_select = this.$el.find('select#opp_input_rank');
+			var ctx = this;
+			el_select.change(function() {
+				var field_selected = el_select.val();
+				console.log(field_selected);
+			});
+			
+			var el_input = this.$el.find('input#opp_input_key');
+			
 		},
 	});
 
