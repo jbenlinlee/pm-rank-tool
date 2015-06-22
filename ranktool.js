@@ -3,7 +3,9 @@ $(function() {
 	var userview = new UserView({model:user});
 	var rankfields = new RankFieldCollection();
 	
-	var oppInputView = new OPPInputView();
+	var oppCandidates = new OPPCollection();
+	var oppCandidatesView = new OPPCandidateListView({model: oppCandidates, el: $("div#opp_candidates")});
+	var oppInputView = new OPPInputView({model: oppCandidates});
 		
 	var AppView = Backbone.View.extend({
 		el: $('#ranktoolapp'),
