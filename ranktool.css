@@ -1,3 +1,11 @@
+div.panel {
+	border-style: solid;
+	border-width: 0px 0px 1px;
+	margin-bottom: 1em;
+	
+	padding: 1em;
+}
+
 div.sheet {
 	position: absolute;
 	top: 0;
@@ -12,4 +20,48 @@ div.sheet {
 	border-width: 0px 2px 0px 0px;
 	border-color: #000000;
 	border-style: solid;
+}
+
+div.opp_cell {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+div.opp_key {
+	position: absolute;
+	top: 0em;
+	left: 0em;
+	
+	width: 5em;
+}
+
+div.opp_name {
+	position: absolute;
+	top: 0em;
+	left: 6em;
+	
+	width: 25em;
+}
+
+div.opp_status {
+	position: absolute;
+	top: 0em;
+	left: 32em;
+	
+	width: 14em;
+}
+
+div.opp_tools {
+	position: absolute;
+	top: 0em;
+	left: 47em;
+}
+
+div.opp {
+	width: 100%;
+	height: 1.5em;
+	position: relative;
+	
+	margin-bottom: 0.25em;
 }

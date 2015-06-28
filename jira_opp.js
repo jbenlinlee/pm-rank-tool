@@ -11,7 +11,8 @@ var OPPModel = Backbone.Model.extend({
 });
 
 var OPPView = Backbone.View.extend({
-	tagName: "li",
+	tagName: "div",
+	attributes: {"class": "opp"},
 	add_button: false,
 	remove_button: false,
 	rank_buttons: false,
@@ -21,33 +22,39 @@ var OPPView = Backbone.View.extend({
 		var model = this.model;
 		var ctx = this;
 		
-		this.$el.html([model.id, model.get("title"), model.get("status")].join(' | '));
+		// this.$el.html([model.id, model.get("title"), model.get("status")].join(' | '));
+		this.$el.append('<div class="opp_cell opp_key">' + model.id + '</div>');
+		this.$el.append('<div class="opp_cell opp_name">' + model.get("title") + '</div>');
+		this.$el.append('<div class="opp_cell opp_status"><span class="label">' + model.get("status") + '</span></div>');
+		this.$el.append('<div class="opp_cell opp_tools" id="tools"></div>');
+		
+		var tools = this.$el.find('div#tools');
 		
 		if (this.add_button) {
-			this.$el.append(' | <button id="add">Add to Rank</button>');
-			this.$el.find('button#add').click(function (evt) {
+			tools.append('<i class="icon-plus" id="add"></i>');
+			this.$el.find('i#add').click(function (evt) {
 				console.debug("Want to add " + [model.id, model.get("title")].join('/') + " to rank");
 				ctx.trigger("opp_add", model);
 			});
 		}
 		
 		if (this.remove_button) {
-			this.$el.append(' | <button id="remove">Remove from Rank</button>');
-			this.$el.find('button#remove').click(function (evt) {
+			tools.append('<i id="remove" class="icon-remove"></i>');
+			this.$el.find('i#remove').click(function (evt) {
 				console.debug("Want to remove " + [model.id, model.get("title")].join('/') + " from rank");
 				ctx.trigger("opp_remove", model);
 			});
 		}
 		
 		if (this.rank_buttons) {
-			this.$el.append(' | <button id="moveup">Up</button> <button id="movedown">Down</button>');
+			tools.append('<i class="icon-chevron-up" id="moveup"></i> <i class="icon-chevron-down" id="movedown"></i>');
 			
-			this.$el.find('button#moveup').click(function (evt) {
+			this.$el.find('i#moveup').click(function (evt) {
 				console.debug("Move up " + [model.id, model.get("title")].join('/'));
 				ctx.trigger("opp_moveup", model);
 			});
 			
-			this.$el.find('button#movedown').click(function (evt) {
+			this.$el.find('i#movedown').click(function (evt) {
 				console.debug("Move down " + [model.id, model.get("title")].join('/'));
 				ctx.trigger("opp_movedown", model);
 			})
@@ -130,7 +137,7 @@ OPPCandidateListView = Backbone.View.extend({
 	initialize: function() {
 		this.listenTo(this.model, "reset", function() {
 			console.debug("opp candidate collection reset");
-			this.$el.find("ul#list").html("");
+			this.$el.find("div#list").html("");
 		});
 		
 		this.listenTo(this.model, "add", function(oppmodel) {
@@ -138,7 +145,7 @@ OPPCandidateListView = Backbone.View.extend({
 			var oppview = new OPPView({model: oppmodel});
 			oppview.add_button = true;
 			
-			this.$el.find("ul#list").append(oppview.render().el);
+			this.$el.find("div#list").append(oppview.render().el);
 			oppview.on('opp_add', function(opp_model) {
 				this.trigger('opp_add', opp_model);
 			}, this)
@@ -148,7 +155,7 @@ OPPCandidateListView = Backbone.View.extend({
 
 OPPRankListView = Backbone.View.extend({
 	render: function() {
-		var list_elem = this.$el.find("ul#list");
+		var list_elem = this.$el.find("div#list");
 		list_elem.html("");
 		
 		var oppcollection = this.model;
