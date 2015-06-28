@@ -24,6 +24,8 @@ var UserModel = Backbone.Model.extend({
 		}).done(function(data, status, jqxhr) {
 			console.log(data);
 			user.set("validated", true);
+		}).fail(function(xhr, status, error) {
+			user.set("validated", false);
 		});
 	}
 });
@@ -39,6 +41,12 @@ var UserView = Backbone.View.extend({
 		}
 		
 		return this;
+	},
+	
+	initialize: function() {
+		this.listenTo(this.model, "change", function() {
+			this.render();
+		});
 	},
 	
 	lastTime: undefined,

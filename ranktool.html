@@ -1,24 +1,29 @@
 <html>
 <head>
   <title>Rank Tool</title>
+  <link rel="stylesheet" type="text/css" href="ranktool.css">
 </head>
 <body>
 <div id="ranktoolapp">
-	<div id="jira_credentials">
-	Username: <input type="text" id="jira_user"></input>
-	Password: <input type="password" id="jira_pass"></input>
+	<div id="jira_credentials" class="sheet">
+		Username: <input type="text" id="jira_user" style="margin-right: 1em;"></input>
+		Password: <input type="password" id="jira_pass"></input>
 	</div>
 	
 	<div id="opp_input">
 		<div>
-			Add OPP-<input type="text" id="opp_input_key">
-		</div>
-		<div>
-			Add from rank: <select id="opp_input_rank"></select>
+			<input type="text" id="opp_input_key">
 		</div>
 	</div>
 	
 	<div id="opp_candidates">
+		Candidates:
+		<ul id="list">
+		</ul>
+	</div>
+	
+	<div id="opp_rank">
+		Rank:
 		<ul id="list">
 		</ul>
 	</div>

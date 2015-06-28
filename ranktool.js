@@ -6,6 +6,9 @@ $(function() {
 	var oppCandidates = new OPPCollection();
 	var oppCandidatesView = new OPPCandidateListView({model: oppCandidates, el: $("div#opp_candidates")});
 	var oppInputView = new OPPInputView({model: oppCandidates});
+	
+	var oppRanks = new OPPCollection();
+	var oppRanksView = new OPPRankListView({model: oppRanks, el: $("div#opp_rank")});
 		
 	var AppView = Backbone.View.extend({
 		el: $('#ranktoolapp'),
@@ -40,9 +43,16 @@ $(function() {
 			}
 		},
 		
+		registerCandidateOpp: function(opp_model) {
+			console.log('Got add request for ' + [opp_model.id, opp_model.get("title")].join('/'));
+			oppRanks.add(opp_model);
+		},
+		
 		initialize: function() {
 			this.listenTo(user, "change", this.checkUserValidation);
 			this.listenTo(rankfields, 'add', this.addRankField);
+
+			oppCandidatesView.on('opp_add', this.registerCandidateOpp, this);
 			
 			user.validate(); // Initial validation
 			

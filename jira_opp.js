@@ -12,8 +12,47 @@ var OPPModel = Backbone.Model.extend({
 
 var OPPView = Backbone.View.extend({
 	tagName: "li",
+	add_button: false,
+	remove_button: false,
+	rank_buttons: false,
+	rank: 0,
+	
 	render: function() {
-		this.$el.html([this.model.id, this.model.get("title"), this.model.get("status")].join(' | '));
+		var model = this.model;
+		var ctx = this;
+		
+		this.$el.html([model.id, model.get("title"), model.get("status")].join(' | '));
+		
+		if (this.add_button) {
+			this.$el.append(' | <button id="add">Add to Rank</button>');
+			this.$el.find('button#add').click(function (evt) {
+				console.debug("Want to add " + [model.id, model.get("title")].join('/') + " to rank");
+				ctx.trigger("opp_add", model);
+			});
+		}
+		
+		if (this.remove_button) {
+			this.$el.append(' | <button id="remove">Remove from Rank</button>');
+			this.$el.find('button#remove').click(function (evt) {
+				console.debug("Want to remove " + [model.id, model.get("title")].join('/') + " from rank");
+				ctx.trigger("opp_remove", model);
+			});
+		}
+		
+		if (this.rank_buttons) {
+			this.$el.append(' | <button id="moveup">Up</button> <button id="movedown">Down</button>');
+			
+			this.$el.find('button#moveup').click(function (evt) {
+				console.debug("Move up " + [model.id, model.get("title")].join('/'));
+				ctx.trigger("opp_moveup", model);
+			});
+			
+			this.$el.find('button#movedown').click(function (evt) {
+				console.debug("Move down " + [model.id, model.get("title")].join('/'));
+				ctx.trigger("opp_movedown", model);
+			})
+		}
+
 		return this;
 	}
 });
@@ -97,7 +136,68 @@ OPPCandidateListView = Backbone.View.extend({
 		this.listenTo(this.model, "add", function(oppmodel) {
 			console.debug("opp added to candidate collection");
 			var oppview = new OPPView({model: oppmodel});
+			oppview.add_button = true;
+			
 			this.$el.find("ul#list").append(oppview.render().el);
+			oppview.on('opp_add', function(opp_model) {
+				this.trigger('opp_add', opp_model);
+			}, this)
 		});
 	},
+});
+
+OPPRankListView = Backbone.View.extend({
+	render: function() {
+		var list_elem = this.$el.find("ul#list");
+		list_elem.html("");
+		
+		var oppcollection = this.model;
+		
+		this.model.forEach(function(elem, idx, list) {
+			var oppview = new OPPView({model: elem});
+			oppview.remove_button = true;
+			oppview.rank_buttons = true;
+			
+			list_elem.append(oppview.render().el);
+			oppview.on('opp_remove', function(opp_model) {
+				oppcollection.remove(opp_model);
+			}, this);
+			
+			oppview.on('opp_moveup', function(opp_model) {
+				console.debug("Got move up command for " + opp_model.id + " at idx " + idx);
+				if (idx > 0) {
+					var opparr = oppcollection.models;
+					opparr[idx] = opparr[idx - 1];
+					opparr[idx - 1] = opp_model;
+					oppcollection.reset(opparr);
+				}
+			});
+			
+			oppview.on('opp_movedown', function(opp_model) {
+				console.debug("Got move down command for " + opp_model.id + " at idx " + idx);
+				if (idx < oppcollection.length - 1) {
+					var opparr = oppcollection.models;
+					opparr[idx] = opparr[idx + 1];
+					opparr[idx + 1] = opp_model;
+					oppcollection.reset(opparr);
+				}
+			})
+		})
+	},
+	
+	initialize: function() {
+		this.listenTo(this.model, "add", function(oppmodel) {
+			console.debug("opp " + oppmodel.id + " added to rank");
+			this.render();
+		});
+		
+		this.listenTo(this.model, "remove", function(oppmodel) {
+			this.render();
+		});
+		
+		this.listenTo(this.model, "reset", function(oppmodel) {
+			console.debug("rank list model reset");
+			this.render();
+		});
+	}
 })
