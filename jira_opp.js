@@ -88,6 +88,11 @@ var OPPInputView = Backbone.View.extend({
 		}
 	
 		var oppkey = this.$el.val();
+		if (oppkey === "") {
+			this.model.reset();
+			return;
+		}
+		
 		var model = this.model;
 		var ctx = this;
 
