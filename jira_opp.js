@@ -31,8 +31,7 @@ var OPPView = Backbone.View.extend({
 		var tools = this.$el.find('div#tools');
 		
 		if (this.add_button) {
-			tools.append('<i class="icon-plus" id="add"></i>');
-			this.$el.find('i#add').click(function (evt) {
+			this.$el.click(function (evt) {
 				console.debug("Want to add " + [model.id, model.get("title")].join('/') + " to rank");
 				ctx.trigger("opp_add", model);
 			});
