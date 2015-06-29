@@ -51,20 +51,10 @@ $(function() {
 		initialize: function() {
 			this.listenTo(user, "change", this.checkUserValidation);
 			this.listenTo(rankfields, 'add', this.addRankField);
+			
+			user.validate();
 
 			oppCandidatesView.on('opp_add', this.registerCandidateOpp, this);
-			
-			user.validate(); // Initial validation
-			
-			var el_select = this.$el.find('select#opp_input_rank');
-			var ctx = this;
-			el_select.change(function() {
-				var field_selected = el_select.val();
-				console.log(field_selected);
-			});
-			
-			var el_input = this.$el.find('input#opp_input_key');
-			
 		},
 	});
 

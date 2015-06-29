@@ -58,11 +58,13 @@ var UserView = Backbone.View.extend({
 		
 		var user = this.model;
 		
-		user.set("username", this.$("#jira_user").val());
-		user.set("password", this.$("#jira_pass").val());
-		this.lastTime = setTimeout(function() {
-			user.validate();
-		}, 500);
+		if (this.$("#jira_user").val() !== "" && this.$("#jira_pass").val() !== "") {
+			user.set("username", this.$("#jira_user").val());
+			user.set("password", this.$("#jira_pass").val());
+			this.lastTime = setTimeout(function() {
+				user.validate();
+			}, 500);
+		}
 	},
 	
 	events: {

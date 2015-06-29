@@ -22,11 +22,66 @@ var OPPView = Backbone.View.extend({
 		var model = this.model;
 		var ctx = this;
 		
-		// this.$el.html([model.id, model.get("title"), model.get("status")].join(' | '));
 		this.$el.append('<div class="opp_cell opp_key">' + model.id + '</div>');
 		this.$el.append('<div class="opp_cell opp_name">' + model.get("title") + '</div>');
 		this.$el.append('<div class="opp_cell opp_status"><span class="label">' + model.get("status") + '</span></div>');
 		this.$el.append('<div class="opp_cell opp_tools" id="tools"></div>');
+
+		// Set title tooltip
+		this.$el.find("div.opp_name").tooltip({
+			placement: "bottom",
+			title: model.get("title"),
+			trigger: "hover",
+			delay: {show: 1000, hide: 0}
+		});
+
+		// Adjust status label color
+		var el_status = this.$el.find("div.opp_status > span.label");
+		
+		switch(model.get("status").toUpperCase()) {
+		case "BACKLOG":
+			break;
+		case "SUBMITTED TO PM":
+			break;
+		case "FUNCTIONAL DESIGN IN PROGRESS":
+			break;
+		case "FUNCTIONAL DESIGN REVIEW":
+			el_status.addClass("label-info");
+			break;
+		case "READY FOR TECHNICAL APPROACH":
+			el_status.addClass("label-info");
+			break;
+		case "TECHNICAL APPROACH IN PROGRESS":
+			el_status.addClass("label-info");
+			break;
+		case "TECHNICAL APPROACH REVIEW":
+			el_status.addClass("label-info");
+			break;
+		case "READY FOR TECHNICAL DESIGN":
+			el_status.addClass("label-info");
+			break;
+		case "TECHNICAL DESIGN IN PROGRESS":
+			el_status.addClass("label-info");
+			break;
+		case "TECHNICAL DESIGN REVIEW":
+			el_status.addClass("label-info");
+			break;
+		case "READY TO BE SCHEDULED":
+			el_status.addClass("label-success");
+			break;
+		case "SCHEDULED":
+			el_status.addClass("label-success");
+			break;			
+		case "COMPLETE":
+			el_status.addClass("label-success");
+			break;
+		case "DECLINED":
+			el_status.addClass("label-important");
+			break;
+		case "DEFERRED":
+			el_status.addClass("label-important");
+			break;
+		}
 		
 		var tools = this.$el.find('div#tools');
 		
