@@ -274,23 +274,25 @@ OPPRankListView = Backbone.View.extend({
 			});
 			
 			oppview.on('opp_insertbefore', function(sourceid, targetid) {
-				var opparr = oppcollection.models;
-				var newopparr = [];
-				var sourceopp = oppcollection.get(sourceid);
-				var targetopp = oppcollection.get(targetid);
+				if (sourceid !== targetid) {
+					var opparr = oppcollection.models;
+					var newopparr = [];
+					var sourceopp = oppcollection.get(sourceid);
+					var targetopp = oppcollection.get(targetid);
 				
-				for (var i = 0; i < opparr.length; ++i) {
-					if (opparr[i] != sourceopp) {
-						if (opparr[i] == targetopp) {
-							newopparr.push(sourceopp);
-						}
+					for (var i = 0; i < opparr.length; ++i) {
+						if (opparr[i] != sourceopp) {
+							if (opparr[i] == targetopp) {
+								newopparr.push(sourceopp);
+							}
 						
-						newopparr.push(opparr[i]);
+							newopparr.push(opparr[i]);
+						}
 					}
-				}
 				
-				oppcollection.reset(newopparr);
-			})
+					oppcollection.reset(newopparr);
+				}
+			});
 		})
 	},
 	
