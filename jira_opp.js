@@ -100,22 +100,6 @@ var OPPView = Backbone.View.extend({
 			});
 		}
 		
-		/*
-		if (this.rank_buttons) {
-			tools.append('<i class="icon-chevron-up" id="moveup"></i> <i class="icon-chevron-down" id="movedown"></i>');
-			
-			this.$el.find('i#moveup').click(function (evt) {
-				console.debug("Move up " + [model.id, model.get("title")].join('/'));
-				ctx.trigger("opp_moveup", model);
-			});
-			
-			this.$el.find('i#movedown').click(function (evt) {
-				console.debug("Move down " + [model.id, model.get("title")].join('/'));
-				ctx.trigger("opp_movedown", model);
-			})
-		}
-		*/
-		
 		if (this.rank_buttons) {
 			this.$el.attr("draggable", "true");
 			this.el.ondragstart = function(event) {
@@ -252,26 +236,6 @@ OPPRankListView = Backbone.View.extend({
 			oppview.on('opp_remove', function(opp_model) {
 				oppcollection.remove(opp_model);
 			}, this);
-			
-			oppview.on('opp_moveup', function(opp_model) {
-				console.debug("Got move up command for " + opp_model.id + " at idx " + idx);
-				if (idx > 0) {
-					var opparr = oppcollection.models;
-					opparr[idx] = opparr[idx - 1];
-					opparr[idx - 1] = opp_model;
-					oppcollection.reset(opparr);
-				}
-			});
-			
-			oppview.on('opp_movedown', function(opp_model) {
-				console.debug("Got move down command for " + opp_model.id + " at idx " + idx);
-				if (idx < oppcollection.length - 1) {
-					var opparr = oppcollection.models;
-					opparr[idx] = opparr[idx + 1];
-					opparr[idx + 1] = opp_model;
-					oppcollection.reset(opparr);
-				}
-			});
 			
 			oppview.on('opp_insertbefore', function(sourceid, targetid) {
 				if (sourceid !== targetid) {
