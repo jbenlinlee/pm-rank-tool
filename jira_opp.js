@@ -100,6 +100,7 @@ var OPPView = Backbone.View.extend({
 			});
 		}
 		
+		/*
 		if (this.rank_buttons) {
 			tools.append('<i class="icon-chevron-up" id="moveup"></i> <i class="icon-chevron-down" id="movedown"></i>');
 			
@@ -112,6 +113,29 @@ var OPPView = Backbone.View.extend({
 				console.debug("Move down " + [model.id, model.get("title")].join('/'));
 				ctx.trigger("opp_movedown", model);
 			})
+		}
+		*/
+		
+		if (this.rank_buttons) {
+			this.$el.attr("draggable", "true");
+			this.el.ondragstart = function(event) {
+				console.debug("Dragging " + model.id);
+				event.dataTransfer.setData("text/plain", model.id);
+			};
+			
+			this.el.ondragover = function(event) {
+				event.preventDefault();
+			};
+			
+			this.el.ondragenter = function(event) {
+				event.preventDefault();
+			};
+			
+			this.el.ondrop = function(event) {
+				var dropOpp = event.dataTransfer.getData("text/plain");
+				console.debug("Dropping " + dropOpp + " on " + model.id);
+				ctx.trigger("opp_insertbefore", dropOpp, model.id);
+			};
 		}
 
 		return this;
@@ -247,6 +271,25 @@ OPPRankListView = Backbone.View.extend({
 					opparr[idx + 1] = opp_model;
 					oppcollection.reset(opparr);
 				}
+			});
+			
+			oppview.on('opp_insertbefore', function(sourceid, targetid) {
+				var opparr = oppcollection.models;
+				var newopparr = [];
+				var sourceopp = oppcollection.get(sourceid);
+				var targetopp = oppcollection.get(targetid);
+				
+				for (var i = 0; i < opparr.length; ++i) {
+					if (opparr[i] != sourceopp) {
+						if (opparr[i] == targetopp) {
+							newopparr.push(sourceopp);
+						}
+						
+						newopparr.push(opparr[i]);
+					}
+				}
+				
+				oppcollection.reset(newopparr);
 			})
 		})
 	},
