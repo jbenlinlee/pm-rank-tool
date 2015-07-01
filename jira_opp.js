@@ -22,13 +22,17 @@ var OPPView = Backbone.View.extend({
 		var model = this.model;
 		var ctx = this;
 		
-		this.$el.append('<div class="opp_cell opp_key">' + model.id + '</div>');
-		this.$el.append('<div class="opp_cell opp_name">' + model.get("title") + '</div>');
-		this.$el.append('<div class="opp_cell opp_status"><span class="label">' + model.get("status") + '</span></div>');
-		this.$el.append('<div class="opp_cell opp_tools" id="tools"></div>');
+		this.$el.append('<div class="opp_insert"></div>');
+		this.$el.append('<div class="opp_row"></div>');
+		var row = this.$el.find("div.opp_row");
+		
+		row.append('<div class="opp_cell opp_key">' + model.id + '</div>');
+		row.append('<div class="opp_cell opp_name">' + model.get("title") + '</div>');
+		row.append('<div class="opp_cell opp_status"><span class="label">' + model.get("status") + '</span></div>');
+		row.append('<div class="opp_cell opp_tools" id="tools"></div>');
 
 		// Set title tooltip
-		this.$el.find("div.opp_name").tooltip({
+		row.find("div.opp_name").tooltip({
 			placement: "bottom",
 			title: model.get("title"),
 			trigger: "hover",
@@ -36,7 +40,7 @@ var OPPView = Backbone.View.extend({
 		});
 
 		// Adjust status label color
-		var el_status = this.$el.find("div.opp_status > span.label");
+		var el_status = row.find("div.opp_status > span.label");
 		
 		switch(model.get("status").toUpperCase()) {
 		case "BACKLOG":
@@ -83,7 +87,7 @@ var OPPView = Backbone.View.extend({
 			break;
 		}
 		
-		var tools = this.$el.find('div#tools');
+		var tools = row.find('div#tools');
 		
 		if (this.add_button) {
 			this.$el.click(function (evt) {
@@ -102,24 +106,41 @@ var OPPView = Backbone.View.extend({
 		
 		if (this.rank_buttons) {
 			this.$el.attr("draggable", "true");
+			
 			this.el.ondragstart = function(event) {
 				console.debug("Dragging " + model.id);
 				event.dataTransfer.setData("text/plain", model.id);
+				ctx.trigger("opp_dragstart");
 			};
 			
 			this.el.ondragover = function(event) {
+				$(event.target).find("div.opp_insert").show();
 				event.preventDefault();
 			};
 			
 			this.el.ondragenter = function(event) {
+				$(event.target).find("div.opp_insert").show();
 				event.preventDefault();
 			};
+			
+			this.el.ondragleave = function(event) {
+				$(event.target).find("div.opp_insert").hide();
+				event.preventDefault();
+			}
 			
 			this.el.ondrop = function(event) {
 				var dropOpp = event.dataTransfer.getData("text/plain");
 				console.debug("Dropping " + dropOpp + " on " + model.id);
 				ctx.trigger("opp_insertbefore", dropOpp, model.id);
+				$(event.target).find("div.opp_insert").hide();
+				
+				event.preventDefault();
 			};
+			
+			this.el.ondragend = function(event) {
+				ctx.trigger("opp_dragend");
+				event.preventDefault();
+			}
 		}
 
 		return this;
@@ -173,7 +194,7 @@ var OPPInputView = Backbone.View.extend({
 				});
 			} else {
 				var postData = {
-					"jql": 'project=OPP and (description~"' + oppkey + '" or summary~"' + oppkey + '")'
+					"jql": 'project=OPP and (description~"' + oppkey + '" or summary~"' + oppkey + '") and status not in ("Scheduled", "Ready to be Scheduled", "Declined", "Deferred", "Complete")'
 				}
 				
 				$.ajax({
@@ -256,6 +277,14 @@ OPPRankListView = Backbone.View.extend({
 				
 					oppcollection.reset(newopparr);
 				}
+			});
+			
+			oppview.on('opp_dragstart', function() {
+				list_elem.find("div.opp").addClass("dragging");
+			});
+			
+			oppview.on('opp_dragend', function() {
+				list_elem.find("div.opp").removeClass("dragging");
 			});
 		})
 	},
