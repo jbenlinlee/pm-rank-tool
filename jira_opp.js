@@ -113,11 +113,6 @@ var OPPView = Backbone.View.extend({
 				ctx.trigger("opp_dragstart");
 			};
 			
-			this.el.ondragover = function(event) {
-				$(event.target).find("div.opp_insert").show();
-				event.preventDefault();
-			};
-			
 			this.el.ondragenter = function(event) {
 				$(event.target).find("div.opp_insert").show();
 				event.preventDefault();
