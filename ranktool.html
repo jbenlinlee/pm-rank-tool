@@ -6,22 +6,33 @@
 </head>
 <body>
 <div id="ranktoolapp">	
-	<div id="jira_credentials" class="sheet">
-		<input type="text" id="jira_user" placeholder="Username"></input>
-		<input type="password" id="jira_pass" placeholder="Password"></input>
+	<div id="leftrail">
+		<ul class="nav nav-list">
+			<li><i class="icon-home icon-white"></i> User</li>
+			<li><i class="icon-search icon-white"></i> Search</li>
+			<li><i class="icon-heart icon-white"></i> Suggestions</li>
+			<li><i class="icon-list icon-white"></i> Rank</li>
+		</ul>
 	</div>
 	
-	<div id="opp_candidates" class="panel">
-		<div id="opp_input">
-			<input type="text" id="opp_input_key" class="search-query" placeholder="Issue search">
+	<div id="workarea">
+		<div id="jira_credentials" class="sheet">
+			<input type="text" id="jira_user" placeholder="Username"></input>
+			<input type="password" id="jira_pass" placeholder="Password"></input>
 		</div>
+	
+		<div id="opp_candidates" class="panel">
+			<div id="opp_input">
+				<input type="text" id="opp_input_key" class="search-query" placeholder="Issue search">
+			</div>
 
-		<div id="list">
+			<div id="list">
+			</div>
 		</div>
-	</div>
 	
-	<div id="opp_rank" class="panel">
-		<div id="list">
+		<div id="opp_rank" class="panel">
+			<div id="list">
+			</div>
 		</div>
 	</div>
 </div>
