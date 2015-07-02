@@ -187,10 +187,10 @@ var OPPInputView = Backbone.View.extend({
 					url: 'http://jira.freewheel.tv/rest/api/2/issue/OPP-' + oppkey,
 					contentType: 'application/json'
 				}).done(function(issueData) {
-					model.reset();
-					model.add(ctx.makeOPPModel(issueData));
+					model.reset([ctx.makeOPPModel(issueData)]);
 				}).fail(function(xhr, status, error) {
 					console.log("Failed with status " + xhr.status);
+					model.reset();
 				});
 			} else {
 				var postData = {
@@ -203,14 +203,17 @@ var OPPInputView = Backbone.View.extend({
 					contentType: 'application/json',
 					data: JSON.stringify(postData)
 				}).done(function(issueResults) {
-					model.reset();
+					var opps = [];
 					for (var i = 0; i < issueResults.issues.length; ++i) {
 						var issueData = issueResults.issues[i];
-						model.add(ctx.makeOPPModel(issueData));
+						opps.push(ctx.makeOPPModel(issueData));
 					}
+
+					model.reset(opps);
 				}).fail(function(xhr, status, error) {
 					console.log("Failed with status " + xhr.status);
-				})
+					model.reset();
+				});
 			}
 		}, 500);
 		
@@ -222,12 +225,39 @@ var OPPInputView = Backbone.View.extend({
 });
 
 OPPCandidateListView = Backbone.View.extend({
-	initialize: function() {
-		this.$el.find("div#list").hide();
+	render: function() {
+		list = this.$el.find("div#list");
 		
+		if (this.model.length === 0) {
+			list.html("No results");
+		} else {
+			list.html("");
+
+			for (var i = 0; i < this.model.length; ++i) {
+				var oppview = new OPPView({model: this.model.at(i)});
+				oppview.add_button = true;
+			
+				list.append(oppview.render().el);
+			
+				oppview.on('opp_add', function(opp_model) {
+					this.trigger('opp_add', opp_model);
+				}, this);
+			}
+		}
+	},
+	
+	initialize: function() {
+		var list = this.$el.find("div#list");
+		list.hide();
+				
 		this.listenTo(this.model, "reset", function() {
 			console.debug("opp candidate collection reset");
-			this.$el.find("div#list").html("").hide();
+			list.show();
+			if (this.model.length == 0) {
+				list.html('<div class="opp">No matching OPPs</div>');
+			} else {
+				this.render();
+			}
 		});
 		
 		this.listenTo(this.model, "add", function(oppmodel) {
