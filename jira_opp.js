@@ -223,9 +223,11 @@ var OPPInputView = Backbone.View.extend({
 
 OPPCandidateListView = Backbone.View.extend({
 	initialize: function() {
+		this.$el.find("div#list").hide();
+		
 		this.listenTo(this.model, "reset", function() {
 			console.debug("opp candidate collection reset");
-			this.$el.find("div#list").html("");
+			this.$el.find("div#list").html("").hide();
 		});
 		
 		this.listenTo(this.model, "add", function(oppmodel) {
@@ -233,7 +235,8 @@ OPPCandidateListView = Backbone.View.extend({
 			var oppview = new OPPView({model: oppmodel});
 			oppview.add_button = true;
 			
-			this.$el.find("div#list").append(oppview.render().el);
+			this.$el.find("div#list").append(oppview.render().el).show();
+			
 			oppview.on('opp_add', function(opp_model) {
 				this.trigger('opp_add', opp_model);
 			}, this)
