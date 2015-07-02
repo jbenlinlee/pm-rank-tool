@@ -51,6 +51,9 @@ $(function() {
 		initialize: function() {
 			this.listenTo(user, "change", this.checkUserValidation);
 			this.listenTo(rankfields, 'add', this.addRankField);
+			oppCandidatesView.listenTo(oppInputView, 'opp_search_changed', function(oppkey) {
+				this.oppkey = oppkey;
+			});
 			
 			user.validate();
 

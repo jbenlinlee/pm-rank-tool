@@ -160,7 +160,7 @@ var OPPInputView = Backbone.View.extend({
 		return new OPPModel({
 			id: jiraIssue.key,
 			title: jiraIssue.fields.summary,
-			assignee: jiraIssue.fields.assignee.name,
+			assignee: jiraIssue.fields.assignee != undefined ? jiraIssue.fields.assignee.name : "Unassigned",
 			status: jiraIssue.fields.status.name			
 		});
 	},
@@ -171,6 +171,8 @@ var OPPInputView = Backbone.View.extend({
 		}
 	
 		var oppkey = this.$el.val();
+		this.trigger('opp_search_changed', oppkey);
+		
 		if (oppkey === "") {
 			this.model.reset();
 			return;
@@ -225,13 +227,18 @@ var OPPInputView = Backbone.View.extend({
 });
 
 OPPCandidateListView = Backbone.View.extend({
+	oppkey: "",
+	
 	render: function() {
 		list = this.$el.find("div#list");
 		
-		if (this.model.length === 0) {
-			list.html("No results");
+		if (this.oppkey === "") {
+			list.hide();
+		}
+		else if (this.model.length === 0) {
+			list.html("No results").show();
 		} else {
-			list.html("");
+			list.html("").show();
 
 			for (var i = 0; i < this.model.length; ++i) {
 				var oppview = new OPPView({model: this.model.at(i)});
@@ -252,12 +259,7 @@ OPPCandidateListView = Backbone.View.extend({
 				
 		this.listenTo(this.model, "reset", function() {
 			console.debug("opp candidate collection reset");
-			list.show();
-			if (this.model.length == 0) {
-				list.html('<div class="opp">No matching OPPs</div>');
-			} else {
-				this.render();
-			}
+			this.render();
 		});
 		
 		this.listenTo(this.model, "add", function(oppmodel) {
