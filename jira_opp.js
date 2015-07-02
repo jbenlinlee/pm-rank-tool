@@ -194,7 +194,7 @@ var OPPInputView = Backbone.View.extend({
 				});
 			} else {
 				var postData = {
-					"jql": 'project=OPP and (description~"' + oppkey + '" or summary~"' + oppkey + '") and status not in ("Scheduled", "Ready to be Scheduled", "Declined", "Deferred", "Complete")'
+					"jql": 'project=OPP and (description~"' + oppkey + '" or summary~"' + oppkey + '") and status not in ("Scheduled", "Ready to be Scheduled", "Declined", "Deferred", "Complete") order by createdDate desc'
 				}
 				
 				$.ajax({
