@@ -1,8 +1,8 @@
 function appStart() {
 	chrome.app.window.create('ranktool.html', {
 		'bounds': {
-			'width': 700,
-			'height': 700
+			'width': 850,
+			'height': 600
 		}
 	});
 }
