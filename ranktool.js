@@ -1,7 +1,6 @@
 $(function() {	
 	var user = new UserModel();
 	var userview = new UserView({model:user});
-	var rankfields = new RankFieldCollection();
 	
 	var oppCandidates = new OPPCollection();
 	var oppCandidatesView = new OPPCandidateListView({model: oppCandidates, el: $("div#opp_candidates")});
@@ -9,6 +8,9 @@ $(function() {
 	
 	var oppRanks = new OPPCollection();
 	var oppRanksView = new OPPRankListView({model: oppRanks, el: $("div#opp_rank")});
+	
+	var rankfields = new RankFieldCollection();
+	var rankfieldSelectView = new RankFieldSelectView({model: rankfields, el: $("select#rank_field_select")});
 		
 	var AppView = Backbone.View.extend({
 		el: $('#ranktoolapp'),
@@ -30,11 +32,6 @@ $(function() {
 			});
 		},
 		
-		addRankField: function(rankfield) {
-			var el_select = this.$el.find('select#opp_input_rank');
-			el_select.append('<option value="' + rankfield.get("id") + '">' + rankfield.get("name").substr(7) + '</option>');
-		},
-		
 		checkUserValidation: function() {
 			if (user.hasChanged("validated") && user.get("validated")) {
 				console.log("User is validated!");
@@ -50,7 +47,7 @@ $(function() {
 		
 		initialize: function() {
 			this.listenTo(user, "change", this.checkUserValidation);
-			this.listenTo(rankfields, 'add', this.addRankField);
+
 			oppCandidatesView.listenTo(oppInputView, 'opp_search_changed', function(oppkey) {
 				this.oppkey = oppkey;
 			});

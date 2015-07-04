@@ -283,6 +283,13 @@ OPPRankListView = Backbone.View.extend({
 		
 		var oppcollection = this.model;
 		
+		rankSelector = this.$el.find("select#rank_field_select");
+		if (oppcollection.length > 0) {
+			rankSelector.show();
+		} else {
+			rankSelector.hide();
+		}
+		
 		this.model.forEach(function(elem, idx, list) {
 			var oppview = new OPPView({model: elem});
 			oppview.remove_button = true;
@@ -338,5 +345,7 @@ OPPRankListView = Backbone.View.extend({
 			console.debug("rank list model reset");
 			this.render();
 		});
+		
+		this.render();
 	}
 })
