@@ -44,49 +44,52 @@ var OPPView = Backbone.View.extend({
 		
 		switch(model.get("status").toUpperCase()) {
 		case "BACKLOG":
-			el_status.addClass("label-default");
+			el_status.addClass("label-success");
 			break;
 		case "SUBMITTED TO PM":
-			el_status.addClass("label-default");
+			el_status.addClass("label-success");
 			break;
 		case "FUNCTIONAL DESIGN IN PROGRESS":
-			el_status.addClass("label-default");
+			el_status.addClass("label-success");
 			break;
 		case "FUNCTIONAL DESIGN REVIEW":
-			el_status.addClass("label-info");
+			el_status.addClass("label-success");
 			break;
 		case "READY FOR TECHNICAL APPROACH":
-			el_status.addClass("label-info");
+			el_status.addClass("label-success");
 			break;
 		case "TECHNICAL APPROACH IN PROGRESS":
-			el_status.addClass("label-info");
+			el_status.addClass("label-warning");
 			break;
 		case "TECHNICAL APPROACH REVIEW":
-			el_status.addClass("label-info");
+			el_status.addClass("label-warning");
 			break;
 		case "READY FOR TECHNICAL DESIGN":
-			el_status.addClass("label-info");
+			el_status.addClass("label-warning");
 			break;
 		case "TECHNICAL DESIGN IN PROGRESS":
-			el_status.addClass("label-info");
+			el_status.addClass("label-warning");
 			break;
 		case "TECHNICAL DESIGN REVIEW":
-			el_status.addClass("label-info");
+			el_status.addClass("label-warning");
 			break;
 		case "READY TO BE SCHEDULED":
-			el_status.addClass("label-success");
+			el_status.addClass("label-warning");
 			break;
 		case "SCHEDULED":
-			el_status.addClass("label-success");
-			break;			
+			el_status.addClass("label-danger");
+			break;	
+		case "READY FOR UAT":
+			el_status.addClass("label-danger");
+			break;
 		case "COMPLETE":
-			el_status.addClass("label-success");
+			el_status.addClass("label-danger");
 			break;
 		case "DECLINED":
-			el_status.addClass("label-important");
+			el_status.addClass("label-danger");
 			break;
 		case "DEFERRED":
-			el_status.addClass("label-important");
+			el_status.addClass("label-danger");
 			break;
 		}
 		
