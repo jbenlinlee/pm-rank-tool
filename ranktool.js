@@ -10,7 +10,7 @@ $(function() {
 	var oppRanksView = new OPPRankListView({model: oppRanks, el: $("div#opp_rank")});
 	
 	var rankfields = new RankFieldCollection();
-	var rankfieldSelectView = new RankFieldSelectView({model: rankfields, el: $("select#rank_field_select")});
+	var rankfieldSelectView = new RankFieldSelectView({model: rankfields, el: $("div#opp_rank_tools")});
 		
 	var AppView = Backbone.View.extend({
 		el: $('#ranktoolapp'),
