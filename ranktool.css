@@ -1,4 +1,4 @@
-div.panel {
+div.listpanel {
 	margin-bottom: 1em;
 	
 	padding: 1em;
@@ -117,7 +117,6 @@ input#opp_input_key {
 	height: 3em;
 }
 
-div#workarea {
-	position: relative;
-	padding: 1.5em 1.5em 1.5em 10em;
+div.opp_row span.label {
+	display: inline-block;  /* Bootstrap style fix */
 }

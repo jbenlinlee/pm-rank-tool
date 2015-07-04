@@ -44,10 +44,13 @@ var OPPView = Backbone.View.extend({
 		
 		switch(model.get("status").toUpperCase()) {
 		case "BACKLOG":
+			el_status.addClass("label-default");
 			break;
 		case "SUBMITTED TO PM":
+			el_status.addClass("label-default");
 			break;
 		case "FUNCTIONAL DESIGN IN PROGRESS":
+			el_status.addClass("label-default");
 			break;
 		case "FUNCTIONAL DESIGN REVIEW":
 			el_status.addClass("label-info");
@@ -283,7 +286,7 @@ OPPRankListView = Backbone.View.extend({
 		
 		var oppcollection = this.model;
 		
-		rankSelector = this.$el.find("select#rank_field_select");
+		rankSelector = this.$el.find("div#saverank");
 		if (oppcollection.length > 0) {
 			rankSelector.show();
 		} else {
