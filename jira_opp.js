@@ -84,8 +84,8 @@ var OPPView = Backbone.View.extend({
 		this.$el.append('<div class="opp_row"></div>');
 		var row = this.$el.find("div.opp_row");
 		
-		row.append('<div class="opp_cell opp_key">' + model.id + '</div>');
-		row.append('<div class="opp_cell opp_name">' + model.get("title") + '</div>');
+		row.append('<div class="opp_cell opp_key opp_textual">' + model.id + '</div>');
+		row.append('<div class="opp_cell opp_name opp_textual">' + model.get("title") + '</div>');
 		row.append('<div class="opp_cell opp_status"><span class="label">' + model.get("status") + '</span></div>');
 		row.append('<div class="opp_cell opp_tools" id="tools"></div>');
 
@@ -157,6 +157,8 @@ var OPPView = Backbone.View.extend({
 						ctx.trigger("opp_remove", model);
 						ctx.holdForRemoveTimeout = undefined;
 					}, 500);
+					
+					ctx.$el.addClass("remove-imminent");
 				}
 			}
 			
@@ -164,6 +166,7 @@ var OPPView = Backbone.View.extend({
 				if (ctx.holdForRemoveTimeout != undefined) {
 					clearTimeout(ctx.holdForRemoveTimeout);
 					ctx.holdForRemoveTimeout = undefined;
+					ctx.$el.removeClass("remove-imminent");
 				}
 			}
 		}

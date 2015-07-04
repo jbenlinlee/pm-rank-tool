@@ -51,6 +51,10 @@ div.opp_name {
 	width: 100%;
 }
 
+div.opp.remove-imminent div.opp_textual {
+	text-decoration: line-through;
+}
+
 div.opp_status {
 	position: absolute;
 	top: 0em;
