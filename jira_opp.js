@@ -74,6 +74,8 @@ var OPPView = Backbone.View.extend({
 		}
 	},
 	
+	holdForRemoveTimeout: undefined,
+	
 	render: function() {
 		var model = this.model;
 		var ctx = this;
@@ -105,14 +107,6 @@ var OPPView = Backbone.View.extend({
 			this.$el.click(function (evt) {
 				console.debug("Want to add " + [model.id, model.get("title")].join('/') + " to rank");
 				ctx.trigger("opp_add", model);
-			});
-		}
-		
-		if (this.remove_button) {
-			tools.append('<span id="remove" class="glyphicon glyphicon-remove"></span>');
-			this.$el.find('i#remove').click(function (evt) {
-				console.debug("Want to remove " + [model.id, model.get("title")].join('/') + " from rank");
-				ctx.trigger("opp_remove", model);
 			});
 		}
 		
@@ -152,6 +146,22 @@ var OPPView = Backbone.View.extend({
 			this.el.ondragend = function(event) {
 				ctx.trigger("opp_dragend");
 				event.preventDefault();
+			}
+			
+			this.el.onmousedown = function(event) {
+				console.debug("Mouse down on " + model.id);
+				ctx.holdForRemoveTimeout = setTimeout(function() {
+					console.debug("Mouse held to remove " + [model.id, model.get("title")].join('/') + " from rank");
+					ctx.trigger("opp_remove", model);
+					ctx.holdForRemoveTimeout = undefined;
+				}, 500);
+			}
+			
+			this.el.onmouseup = function(event) {
+				if (ctx.holdForRemoveTimeout != undefined) {
+					clearTimeout(ctx.holdForRemoveTimeout);
+					ctx.holdForRemoveTimeout = undefined;
+				}
 			}
 		}
 
