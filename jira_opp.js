@@ -117,6 +117,7 @@ var OPPView = Backbone.View.extend({
 				console.debug("Dragging " + model.id);
 				event.dataTransfer.setData("text/plain", model.id);
 				ctx.trigger("opp_dragstart");
+				clearTimeout(ctx.holdForRemoveTimeout);
 			};
 			
 			this.el.ondragenter = function(event) {
@@ -149,12 +150,14 @@ var OPPView = Backbone.View.extend({
 			}
 			
 			this.el.onmousedown = function(event) {
-				console.debug("Mouse down on " + model.id);
-				ctx.holdForRemoveTimeout = setTimeout(function() {
-					console.debug("Mouse held to remove " + [model.id, model.get("title")].join('/') + " from rank");
-					ctx.trigger("opp_remove", model);
-					ctx.holdForRemoveTimeout = undefined;
-				}, 500);
+				if (event.buttons === 1) {
+					console.debug("Mouse down on " + model.id);
+					ctx.holdForRemoveTimeout = setTimeout(function() {
+						console.debug("Mouse held to remove " + [model.id, model.get("title")].join('/') + " from rank");
+						ctx.trigger("opp_remove", model);
+						ctx.holdForRemoveTimeout = undefined;
+					}, 500);
+				}
 			}
 			
 			this.el.onmouseup = function(event) {
