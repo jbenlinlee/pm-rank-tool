@@ -9,6 +9,8 @@ div.listpanel div.listpanel-tools {
 	padding: 5px 14px;
 	background-color: #DDDDDD;
 	
+	min-width: 768px;
+	
 	position: static;
 	top: 100%;
 	left: 0;
@@ -41,22 +43,20 @@ div.opp_key {
 	top: 0em;
 	left: 0em;
 	
-	width: 5em;
+	width: 6em;
+	padding-right: 1em;
 }
 
 div.opp_name {
-	position: absolute;
-	top: 0em;
-	left: 6em;
-	
-	width: 25em;
+	width: 100%;
 }
 
 div.opp_status {
 	position: absolute;
 	top: 0em;
-	left: 32em;
+	right: 0em;
 	
+	padding-left: 1em;
 	width: 14em;
 }
 
@@ -80,6 +80,9 @@ div.opp_row {
 	width: 100%;
 	height: 1.5em;
 	position: relative;
+	
+	padding-right: 14em;
+	padding-left: 6em;
 }
 
 div.opp_insert {
