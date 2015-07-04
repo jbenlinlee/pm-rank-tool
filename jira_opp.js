@@ -18,6 +18,62 @@ var OPPView = Backbone.View.extend({
 	rank_buttons: false,
 	rank: 0,
 	
+	statusToLabel: function(status) {
+		switch(status.toUpperCase()) {
+		case "BACKLOG":
+			return "success";
+			break;
+		case "SUBMITTED TO PM":
+			return "success";
+			break;
+		case "FUNCTIONAL DESIGN IN PROGRESS":
+			return "success";
+			break;
+		case "FUNCTIONAL DESIGN REVIEW":
+			return "success";
+			break;
+		case "READY FOR TECHNICAL APPROACH":
+			return "success";
+			break;
+		case "TECHNICAL APPROACH IN PROGRESS":
+			return "warning";
+			break;
+		case "TECHNICAL APPROACH REVIEW":
+			return "warning";
+			break;
+		case "READY FOR TECHNICAL DESIGN":
+			return "warning";
+			break;
+		case "TECHNICAL DESIGN IN PROGRESS":
+			return "warning";
+			break;
+		case "TECHNICAL DESIGN REVIEW":
+			return "warning";
+			break;
+		case "READY TO BE SCHEDULED":
+			return "warning";
+			break;
+		case "SCHEDULED":
+			return "danger";
+			break;	
+		case "READY FOR UAT":
+			return "danger";
+			break;
+		case "COMPLETE":
+			return "danger";
+			break;
+		case "DECLINED":
+			return "danger";
+			break;
+		case "DEFERRED":
+			return "danger";
+			break;
+		default:
+			return "default"
+			break;
+		}
+	},
+	
 	render: function() {
 		var model = this.model;
 		var ctx = this;
@@ -41,57 +97,7 @@ var OPPView = Backbone.View.extend({
 
 		// Adjust status label color
 		var el_status = row.find("div.opp_status > span.label");
-		
-		switch(model.get("status").toUpperCase()) {
-		case "BACKLOG":
-			el_status.addClass("label-success");
-			break;
-		case "SUBMITTED TO PM":
-			el_status.addClass("label-success");
-			break;
-		case "FUNCTIONAL DESIGN IN PROGRESS":
-			el_status.addClass("label-success");
-			break;
-		case "FUNCTIONAL DESIGN REVIEW":
-			el_status.addClass("label-success");
-			break;
-		case "READY FOR TECHNICAL APPROACH":
-			el_status.addClass("label-success");
-			break;
-		case "TECHNICAL APPROACH IN PROGRESS":
-			el_status.addClass("label-warning");
-			break;
-		case "TECHNICAL APPROACH REVIEW":
-			el_status.addClass("label-warning");
-			break;
-		case "READY FOR TECHNICAL DESIGN":
-			el_status.addClass("label-warning");
-			break;
-		case "TECHNICAL DESIGN IN PROGRESS":
-			el_status.addClass("label-warning");
-			break;
-		case "TECHNICAL DESIGN REVIEW":
-			el_status.addClass("label-warning");
-			break;
-		case "READY TO BE SCHEDULED":
-			el_status.addClass("label-warning");
-			break;
-		case "SCHEDULED":
-			el_status.addClass("label-danger");
-			break;	
-		case "READY FOR UAT":
-			el_status.addClass("label-danger");
-			break;
-		case "COMPLETE":
-			el_status.addClass("label-danger");
-			break;
-		case "DECLINED":
-			el_status.addClass("label-danger");
-			break;
-		case "DEFERRED":
-			el_status.addClass("label-danger");
-			break;
-		}
+		el_status.addClass("label-" + this.statusToLabel(model.get("status")));
 		
 		var tools = row.find('div#tools');
 		
