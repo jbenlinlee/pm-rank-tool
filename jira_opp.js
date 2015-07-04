@@ -100,7 +100,7 @@ var OPPView = Backbone.View.extend({
 		}
 		
 		if (this.remove_button) {
-			tools.append('<i id="remove" class="icon-remove"></i>');
+			tools.append('<span id="remove" class="glyphicon glyphicon-remove"></span>');
 			this.$el.find('i#remove').click(function (evt) {
 				console.debug("Want to remove " + [model.id, model.get("title")].join('/') + " from rank");
 				ctx.trigger("opp_remove", model);
