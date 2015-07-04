@@ -286,7 +286,7 @@ OPPRankListView = Backbone.View.extend({
 		
 		var oppcollection = this.model;
 		
-		rankSelector = this.$el.find("div#saverank");
+		rankSelector = this.$el.find("div#opp_rank_tools");
 		if (oppcollection.length > 0) {
 			rankSelector.show();
 		} else {
