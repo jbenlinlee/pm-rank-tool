@@ -1,7 +1,17 @@
 div.listpanel {
+	position: relative;
 	margin-bottom: 1em;
+	padding: 1em 1em 2.5em;
+}
+
+div.listpanel div.listpanel-tools {
+	height: 60px;
+	padding: 5px 14px;
+	background-color: #DDDDDD;
 	
-	padding: 1em;
+	position: static;
+	top: 100%;
+	left: 0;
 }
 
 div.sheet {
