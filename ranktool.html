@@ -9,13 +9,21 @@
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 </head>
 <body>
-<div id="ranktoolapp">	
-	<div id="workarea">
-		<div id="jira_credentials" class="sheet">
-			<input type="text" id="jira_user" placeholder="Username"></input>
-			<input type="password" id="jira_pass" placeholder="Password"></input>
+<div id="ranktoolapp">
+	<div id="jira_credentials" class="sheet">
+		<div class="alert alert-danger" role="alert">Woops. Looks like you need to authenticate.</div>
+		
+		<div class="form-group">
+			<label for="jira_user">Username</label>
+			<input type="text" id="jira_user" class="form-control" placeholder="Username"></input>
 		</div>
-	
+		<div class="form-group">
+			<label for="jira_pass">Password</label>
+			<input type="password" id="jira_pass" class="form-control" placeholder="Password"></input>
+		</div>
+	</div>
+		
+	<div id="workarea">	
 		<div id="opp_candidates" class="listpanel">
 			<div id="opp_input" class="form-group">
 				<input type="text" id="opp_input_key" class="search-query form-control" placeholder="Issue search"></input>
