@@ -75,6 +75,31 @@ var OPPView = Backbone.View.extend({
 	},
 	
 	holdForRemoveTimeout: undefined,
+	holdForRemoveIndicatorTimeout: undefined,
+	
+	setHoldRemoveTimeout: function() {
+		var ctx = this;
+		
+		this.holdForRemoveTimeout = setTimeout(function() {
+			console.debug("Mouse held to remove " + [ctx.model.id, ctx.model.get("title")].join('/') + " from rank");
+			ctx.trigger("opp_remove", ctx.model);
+			ctx.holdForRemoveTimeout = undefined;
+		}, 750);
+		
+		this.holdForRemoveIndicatorTimeout = setTimeout(function() {
+			ctx.$el.addClass("remove-imminent");
+		}, 500);
+	},
+	
+	clearHoldRemoveTimeout: function() {
+		clearTimeout(this.holdForRemoveTimeout);
+		clearTimeout(this.holdForRemoveIndicatorTimeout);
+		
+		this.holdForRemoveTimeout = undefined;
+		this.holdForRemoveIndicatorTimeout = undefined;
+		
+		this.$el.removeClass("remove-imminent");
+	},
 	
 	render: function() {
 		var model = this.model;
@@ -117,7 +142,9 @@ var OPPView = Backbone.View.extend({
 				console.debug("Dragging " + model.id);
 				event.dataTransfer.setData("text/plain", model.id);
 				ctx.trigger("opp_dragstart");
-				clearTimeout(ctx.holdForRemoveTimeout);
+				
+				// Cancel and reset any pending remove action
+				ctx.clearHoldRemoveTimeout();
 			};
 			
 			this.el.ondragenter = function(event) {
@@ -152,21 +179,13 @@ var OPPView = Backbone.View.extend({
 			this.el.onmousedown = function(event) {
 				if (event.buttons === 1) {
 					console.debug("Mouse down on " + model.id);
-					ctx.holdForRemoveTimeout = setTimeout(function() {
-						console.debug("Mouse held to remove " + [model.id, model.get("title")].join('/') + " from rank");
-						ctx.trigger("opp_remove", model);
-						ctx.holdForRemoveTimeout = undefined;
-					}, 500);
-					
-					ctx.$el.addClass("remove-imminent");
+					ctx.setHoldRemoveTimeout();
 				}
 			}
 			
 			this.el.onmouseup = function(event) {
 				if (ctx.holdForRemoveTimeout != undefined) {
-					clearTimeout(ctx.holdForRemoveTimeout);
-					ctx.holdForRemoveTimeout = undefined;
-					ctx.$el.removeClass("remove-imminent");
+					ctx.clearHoldRemoveTimeout();
 				}
 			}
 		}
