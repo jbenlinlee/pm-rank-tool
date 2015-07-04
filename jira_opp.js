@@ -88,7 +88,7 @@ var OPPView = Backbone.View.extend({
 		
 		this.holdForRemoveIndicatorTimeout = setTimeout(function() {
 			ctx.$el.addClass("remove-imminent");
-		}, 500);
+		}, 250);
 	},
 	
 	clearHoldRemoveTimeout: function() {
