@@ -51,10 +51,22 @@ $(function() {
 			oppCandidatesView.listenTo(oppInputView, 'opp_search_changed', function(oppkey) {
 				this.oppkey = oppkey;
 			});
+
+			oppCandidatesView.on('opp_add', this.registerCandidateOpp, this);
+
+			var modal = $("div#save_confirm_modal");
+			modal.modal({show: false});
+			
+			this.listenTo(rankfieldSelectView, "rank_save", function(rankfield_model) {
+				console.log("Saving to rank field " + rankfield_model.id + "/" + rankfield_model.get("name"));
+				var modal_text = modal.find("div.modal-body");
+				
+				modal_text.html("Committing your rank to <strong>" + rankfield_model.get("name") + "</strong> will clear all existing ranks in that field and replace them with your ranks. Are you sure that's a great idea?");
+				modal.modal('show');
+			});
 			
 			user.validate();
 
-			oppCandidatesView.on('opp_add', this.registerCandidateOpp, this);
 		},
 	});
 

@@ -75,15 +75,25 @@ OPPRankListView = Backbone.View.extend({
 var RankFieldSelectView = Backbone.View.extend({
 	initialize: function() {
 		var select = this.$el.find("select#rank_field_select");
+		var saveBtn = this.$el.find("button#saveRankBtn");
+		var rankCollection = this.model;
+		var selectField = undefined;
 
 		this.listenTo(this.model, 'add', function(rankfield) {
 			select.append('<option id="' + rankfield.id + '" value="' + rankfield.id + '">' + rankfield.get("name") + '</option>');
 		});
 		
-		var saveBtn = this.$el.find("button#saveRankBtn");
 		select.change(function(evt) {
-			console.debug(select.val());
+			console.debug("Rank field selection changed to " + select.val());
+			selectField = rankCollection.get(select.val());
 			saveBtn.removeAttr("disabled");
+		});
+		
+		var ctx = this;
+		saveBtn.click(function(evt) {
+			if (selectField != undefined) {
+				ctx.trigger("rank_save", selectField);
+			}
 		});
 	}
 });
