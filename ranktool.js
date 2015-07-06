@@ -45,6 +45,54 @@ $(function() {
 			oppRanks.add(opp_model);
 		},
 		
+		clearRanksHelper: function(rankfield_model, rankedopp_collection, currRanks) {
+			if (currRanks.length > 0) {
+				var issueToClear = currRanks.shift();
+				var ctx = this;
+				
+				var reqObj = {update:{}};
+				reqObj.update[rankfield_model.id] = [{"set":null}];
+				
+				console.log('Clearing ' + issueToClear.key);
+				$.ajax({
+					type: 'PUT',
+					url: issueToClear.self,
+					contentType: 'application/json',
+					data: JSON.stringify(reqObj)
+				}).done(function(resp) {
+					console.debug('Successfully cleared ' + issueToClear.key);
+					ctx.clearRanksHelper(rankfield_model, rankedopp_collection, currRanks);
+				});				
+			} else {
+				console.log("All current ranks cleared");
+			}
+		},
+		
+		saveRanks: function(rankfield_model, rankedopp_collection) {
+			console.debug("Getting current ranks " + rankfield_model.id + "/" + rankfield_model.get("name"));
+			var ctx = this;
+			
+			var currentRank_req = $.ajax({
+					type: 'POST',
+					url: 'http://jira.freewheel.tv/rest/api/2/search',
+					contentType: 'application/json',
+					data: JSON.stringify({jql: 'project=OPP and ' + rankfield_model.get("queryid") + ' is not EMPTY'})
+				}).done(function(searchResponse) {
+					var issuesToClear = [];
+					for (var i = 0; i < searchResponse.issues.length; ++i) {
+						var issue = searchResponse.issues[i];
+						issuesToClear.push(issue);
+					}
+					
+					ctx.clearRanksHelper(rankfield_model, rankedopp_collection, issuesToClear);
+				}).fail(function(xhr, status, error) {
+					console.error("Failure while getting issues to clear")
+				});
+			
+			console.debug("Clearing ranks " + rankfield_model.id + "/" + rankfield_model.get("name"));
+			console.debug("Setting ranks " + rankfield_model.id + "/" + rankfield_model.get("name"));
+		},
+		
 		initialize: function() {
 			this.listenTo(user, "change", this.checkUserValidation);
 
@@ -59,7 +107,6 @@ $(function() {
 			modal.modal({show: false});
 			
 			this.listenTo(rankfieldSelectView, "rank_save", function(rankfield_model) {
-				console.log("Saving to rank field " + rankfield_model.id + "/" + rankfield_model.get("name"));
 				var modal_text = modal.find("div.modal-body");
 				modal_text.html("Committing your rank to <strong>" + rankfield_model.get("name") + "</strong> will clear all existing ranks in that field and replace them with your ranks. Are you sure that's a great idea?");
 				
@@ -69,7 +116,7 @@ $(function() {
 				modal_confirm.click(function(evt) {
 					console.debug("Confirm save ranks to " + rankfield_model.id + "/" + rankfield_model.get("name"));
 					modal.modal('hide');
-					// ctx.saveRanks(rankfield_model, oppRanks);
+					ctx.saveRanks(rankfield_model, oppRanks);
 				});
 				
 				modal.modal('show');
