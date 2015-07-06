@@ -54,14 +54,24 @@ $(function() {
 
 			oppCandidatesView.on('opp_add', this.registerCandidateOpp, this);
 
+			var ctx = this;
 			var modal = $("div#save_confirm_modal");
 			modal.modal({show: false});
 			
 			this.listenTo(rankfieldSelectView, "rank_save", function(rankfield_model) {
 				console.log("Saving to rank field " + rankfield_model.id + "/" + rankfield_model.get("name"));
 				var modal_text = modal.find("div.modal-body");
-				
 				modal_text.html("Committing your rank to <strong>" + rankfield_model.get("name") + "</strong> will clear all existing ranks in that field and replace them with your ranks. Are you sure that's a great idea?");
+				
+				var modal_confirm = modal.find("button#confirmRank");
+				modal_confirm.unbind("click");
+				
+				modal_confirm.click(function(evt) {
+					console.debug("Confirm save ranks to " + rankfield_model.id + "/" + rankfield_model.get("name"));
+					modal.modal('hide');
+					// ctx.saveRanks(rankfield_model, oppRanks);
+				});
+				
 				modal.modal('show');
 			});
 			
