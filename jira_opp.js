@@ -5,6 +5,7 @@ var OPPModel = Backbone.Model.extend({
 			title: "Default OPP Title",
 			assignee: "Default Assignee",
 			status: "Default Status",
+			url: "",
 			release_target: "0.0"
 		}
 	}
@@ -208,7 +209,8 @@ var OPPInputView = Backbone.View.extend({
 			id: jiraIssue.key,
 			title: jiraIssue.fields.summary,
 			assignee: jiraIssue.fields.assignee != undefined ? jiraIssue.fields.assignee.name : "Unassigned",
-			status: jiraIssue.fields.status.name			
+			status: jiraIssue.fields.status.name,
+			url: jiraIssue.self			
 		});
 	},
 	

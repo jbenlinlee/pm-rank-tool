@@ -45,7 +45,30 @@ $(function() {
 			oppRanks.add(opp_model);
 		},
 		
-		clearRanksHelper: function(rankfield_model, rankedopp_collection, currRanks) {
+		setRanksHelper: function(rankfield_model, rankedOpps, nextRank) {
+			if (rankedOpps.length > 0) {
+				var oppToRank = rankedOpps.shift();
+				var ctx = this;
+				
+				var reqObj = {update:{}};
+				reqObj.update[rankfield_model.id] = [{"set": nextRank}];
+				
+				console.log('Setting ' + oppToRank.id + ' to rank ' + nextRank);
+				$.ajax({
+					type: 'PUT',
+					url: oppToRank.get("url"),
+					contentType: 'application/json',
+					data: JSON.stringify(reqObj)
+				}).done(function(resp) {
+					console.debug('Successfully set rank on ' + oppToRank.id);
+					ctx.setRanksHelper(rankfield_model, rankedOpps, nextRank + 1);
+				}).fail(function(xhr, status, error) {
+					console.warn('Failed to set rank on ' + oppToRank.id);
+				});
+			}
+		},
+		
+		clearRanksHelper: function(rankfield_model, rankedopp_collection, currRanks) {			
 			if (currRanks.length > 0) {
 				var issueToClear = currRanks.shift();
 				var ctx = this;
@@ -62,9 +85,17 @@ $(function() {
 				}).done(function(resp) {
 					console.debug('Successfully cleared ' + issueToClear.key);
 					ctx.clearRanksHelper(rankfield_model, rankedopp_collection, currRanks);
+				}).fail(function(xhr, status, error) {
+					console.warn('Failed to clear rank on ' + issueToClear.key);
 				});				
 			} else {
 				console.log("All current ranks cleared");
+				var opps = [];
+				for (var i = 0; i < rankedopp_collection.length; ++i) {
+					opps.push(rankedopp_collection.at(i));
+				}
+				
+				this.setRanksHelper(rankfield_model, opps, 1);
 			}
 		},
 		
@@ -88,9 +119,6 @@ $(function() {
 				}).fail(function(xhr, status, error) {
 					console.error("Failure while getting issues to clear")
 				});
-			
-			console.debug("Clearing ranks " + rankfield_model.id + "/" + rankfield_model.get("name"));
-			console.debug("Setting ranks " + rankfield_model.id + "/" + rankfield_model.get("name"));
 		},
 		
 		initialize: function() {
