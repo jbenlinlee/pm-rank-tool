@@ -6,13 +6,11 @@ OPPRankListView = Backbone.View.extend({
 		var oppcollection = this.model;
 		
 		rankSelector = this.$el.find("div#opp_rank_tools");
-		if (oppcollection.length > 0) {
-			rankSelector.show();
-		} else {
-			rankSelector.hide();
+		if (oppcollection.length == 0) {
+			list_elem.html('<div class="list_placeholder">Empty rank list. Try search for and adding an OPP above.</div>');
 		}
 		
-		this.model.forEach(function(elem, idx, list) {
+		oppcollection.forEach(function(elem, idx, list) {
 			var oppview = new OPPView({model: elem});
 			oppview.remove_button = true;
 			oppview.rank_buttons = true;
@@ -50,7 +48,7 @@ OPPRankListView = Backbone.View.extend({
 			oppview.on('opp_dragend', function() {
 				list_elem.find("div.opp").removeClass("dragging");
 			});
-		})
+		});
 	},
 	
 	initialize: function() {

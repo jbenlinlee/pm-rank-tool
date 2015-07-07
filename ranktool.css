@@ -106,7 +106,7 @@ div.opp_insert {
 	pointer-events: none;
 }
 
-div#opp_candidates div#list {
+div.opp_list {
 	margin-top: 1.5em;
 	padding: 0.25em 0em;
 	
@@ -139,4 +139,16 @@ input#opp_input_key {
 
 div.opp_row span.label {
 	display: inline-block;  /* Bootstrap style fix */
+}
+
+div.list_placeholder {
+	padding: 0px 14px 14px 14px;
+}
+
+div#work_progress {
+	display: none;
+}
+
+div#status-progress {
+	padding: 0em 1em;
 }

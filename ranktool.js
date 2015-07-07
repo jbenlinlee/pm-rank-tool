@@ -45,10 +45,11 @@ $(function() {
 			oppRanks.add(opp_model);
 		},
 		
-		setRanksHelper: function(rankfield_model, rankedOpps, nextRank) {
+		setRanksHelper: function(rankfield_model, rankedOpps, nextRank, numRanksToSet) {
+			var ctx = this;
+			
 			if (rankedOpps.length > 0) {
 				var oppToRank = rankedOpps.shift();
-				var ctx = this;
 				
 				var reqObj = {update:{}};
 				reqObj.update[rankfield_model.id] = [{"set": nextRank}];
@@ -61,14 +62,24 @@ $(function() {
 					data: JSON.stringify(reqObj)
 				}).done(function(resp) {
 					console.debug('Successfully set rank on ' + oppToRank.id);
-					ctx.setRanksHelper(rankfield_model, rankedOpps, nextRank + 1);
+					
+					var progress = (0.5 + (0.5 * (numRanksToSet - rankedOpps.length) / numRanksToSet)) * 100 + "%"
+					console.debug('Progress: ' + progress);
+					$("div#clearset_progress").css("width", progress);
+					
+					ctx.setRanksHelper(rankfield_model, rankedOpps, nextRank + 1, numRanksToSet);
 				}).fail(function(xhr, status, error) {
 					console.warn('Failed to set rank on ' + oppToRank.id);
 				});
+			} else {
+				$("div#clearset_progress").css("width", "100%");
+				setTimeout(function() {
+					$("div#work_progress").hide();
+				}, 3000);
 			}
 		},
 		
-		clearRanksHelper: function(rankfield_model, rankedopp_collection, currRanks) {			
+		clearRanksHelper: function(rankfield_model, rankedopp_collection, currRanks, numRanksToClear) {			
 			if (currRanks.length > 0) {
 				var issueToClear = currRanks.shift();
 				var ctx = this;
@@ -84,23 +95,34 @@ $(function() {
 					data: JSON.stringify(reqObj)
 				}).done(function(resp) {
 					console.debug('Successfully cleared ' + issueToClear.key);
-					ctx.clearRanksHelper(rankfield_model, rankedopp_collection, currRanks);
+					
+					var progress = (0.5 * (numRanksToClear - currRanks.length) / numRanksToClear) * 100 + "%";
+					console.debug('Progress: ' + progress);
+					$("div#work_clear").css("width", progress);
+					
+					ctx.clearRanksHelper(rankfield_model, rankedopp_collection, currRanks, numRanksToClear);
 				}).fail(function(xhr, status, error) {
 					console.warn('Failed to clear rank on ' + issueToClear.key);
 				});				
 			} else {
 				console.log("All current ranks cleared");
+				$("div#clearset_progress").css("width", "50%");
 				var opps = [];
 				for (var i = 0; i < rankedopp_collection.length; ++i) {
 					opps.push(rankedopp_collection.at(i));
 				}
 				
-				this.setRanksHelper(rankfield_model, opps, 1);
+				this.setRanksHelper(rankfield_model, opps, 1, opps.length);
 			}
 		},
 		
 		saveRanks: function(rankfield_model, rankedopp_collection) {
 			console.debug("Getting current ranks " + rankfield_model.id + "/" + rankfield_model.get("name"));
+			
+			var progress = $("div#work_progress");
+			progress.find("div#clearset_progress").css("width", "0%");
+			progress.show();
+			
 			var ctx = this;
 			
 			var currentRank_req = $.ajax({
@@ -115,7 +137,7 @@ $(function() {
 						issuesToClear.push(issue);
 					}
 					
-					ctx.clearRanksHelper(rankfield_model, rankedopp_collection, issuesToClear);
+					ctx.clearRanksHelper(rankfield_model, rankedopp_collection, issuesToClear, issuesToClear.length);
 				}).fail(function(xhr, status, error) {
 					console.error("Failure while getting issues to clear")
 				});
