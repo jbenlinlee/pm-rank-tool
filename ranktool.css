@@ -152,3 +152,22 @@ div#work_progress {
 div#status-progress {
 	padding: 0em 1em;
 }
+
+span.twitter-typeahead {
+	width: 100%;
+}
+
+.tt-menu {
+	border: solid 1px #CCCCCC;
+	background-color: #DDDDDD;
+	z-index: 1000;
+	
+	width: 100%;
+	
+	padding: 7px 14px;
+}
+
+.tt-suggestion {
+	margin-bottom: 7px;
+	margin-left: 21px;
+}

@@ -266,8 +266,24 @@ var OPPInputView = Backbone.View.extend({
 					model.reset();
 				});
 			}
-		}, 500);
-		
+		}, 500);	
+	},
+	
+	initialize: function() {
+		this.$el.typeahead({
+			minLength: 3
+		},
+		{
+			name: 'jira-search',
+			async: false,
+			source: function(query, syncResults) {
+				syncResults([query]);
+			},
+			templates: {
+				header: '<b>Jira Search</b>'
+			}
+		}
+		);
 	},
 	
 	events: {
