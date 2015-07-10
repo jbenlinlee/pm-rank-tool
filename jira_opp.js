@@ -200,10 +200,15 @@ var OPPCollection = Backbone.Collection.extend({
 });
 
 function rankFieldBloodhound(rankFieldCollection) {
+	var rankFieldSuggestions = [];
+	rankFieldCollection.forEach(function(rankFieldModel, idx, list) {
+		rankFieldSuggestions.push({suggestionType: "rank", data: rankFieldModel});
+	});
+	
 	return new Bloodhound({
-		local: rankFieldCollection.models,
+		local: rankFieldSuggestions,
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		datumTokenizer: function(rankFieldModel) { return rankFieldModel.get("name").split(' ') }
+		datumTokenizer: function(rankFieldSuggestion) { return rankFieldSuggestion.data.get("name").split(' ') }
 	});
 }
 
@@ -288,7 +293,7 @@ var OPPInputView = Backbone.View.extend({
 			name: 'rank-fields',
 			async: false,
 			source: rankFieldBloodhound(rankFieldCollection),
-			display: function(rankFieldModel) { return rankFieldModel.get("name").substring(7); },
+			display: function(rankFieldSuggestion) { return rankFieldSuggestion.data.get("name").substring(7); },
 			templates: {
 				header: 'Rank Fields',
 			}
@@ -297,8 +302,9 @@ var OPPInputView = Backbone.View.extend({
 			name: 'jira-search',
 			async: false,
 			source: function(query, syncResults) {
-				syncResults([query]);
+				syncResults([{suggestionType: "textSearch", data: query}]);
 			},
+			display: function(querySuggestion) { return querySuggestion.data },
 			templates: {
 				header: 'Jira Search'
 			}
@@ -308,6 +314,10 @@ var OPPInputView = Backbone.View.extend({
 	
 	initialize: function() {
 		// this.listenTo(this.rankFieldCollection, 'reset', this.setupTypeahead);
+		
+		this.$el.bind('typeahead:select', function(evt, suggestion) {
+			console.log(suggestion);
+		});
 	},
 	
 	events: {
