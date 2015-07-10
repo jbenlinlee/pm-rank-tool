@@ -199,10 +199,20 @@ var OPPCollection = Backbone.Collection.extend({
 	model: OPPModel
 });
 
+function rankFieldBloodhound(rankFieldCollection) {
+	return new Bloodhound({
+		local: rankFieldCollection.models,
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		datumTokenizer: function(rankFieldModel) { return rankFieldModel.get("name").split(' ') }
+	});
+}
+
 var OPPInputView = Backbone.View.extend({
 	el: $("input#opp_input_key"),
 	
 	lastTime: undefined,
+	
+	rankFieldCollection: undefined,
 	
 	makeOPPModel: function(jiraIssue) {
 		return new OPPModel({
@@ -269,9 +279,19 @@ var OPPInputView = Backbone.View.extend({
 		}, 500);	
 	},
 	
-	initialize: function() {
+	setupTypeahead: function(rankFieldCollection) {
 		this.$el.typeahead({
-			minLength: 3
+			minLength: 1,
+			hint: false
+		},
+		{
+			name: 'rank-fields',
+			async: false,
+			source: rankFieldBloodhound(rankFieldCollection),
+			display: function(rankFieldModel) { return rankFieldModel.get("name").substring(7); },
+			templates: {
+				header: '<b>Rank Fields</b>',
+			}
 		},
 		{
 			name: 'jira-search',
@@ -283,7 +303,11 @@ var OPPInputView = Backbone.View.extend({
 				header: '<b>Jira Search</b>'
 			}
 		}
-		);
+		);		
+	},
+	
+	initialize: function() {
+		// this.listenTo(this.rankFieldCollection, 'reset', this.setupTypeahead);
 	},
 	
 	events: {

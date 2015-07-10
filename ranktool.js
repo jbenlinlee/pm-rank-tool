@@ -4,13 +4,14 @@ $(function() {
 	
 	var oppCandidates = new OPPCollection();
 	var oppCandidatesView = new OPPCandidateListView({model: oppCandidates, el: $("div#opp_candidates")});
-	var oppInputView = new OPPInputView({model: oppCandidates});
 	
 	var oppRanks = new OPPCollection();
 	var oppRanksView = new OPPRankListView({model: oppRanks, el: $("div#opp_rank")});
 	
 	var rankfields = new RankFieldCollection();
 	var rankfieldSelectView = new RankFieldSelectView({model: rankfields, el: $("div#opp_rank_tools")});
+
+	var oppInputView = new OPPInputView({model: oppCandidates});
 		
 	var AppView = Backbone.View.extend({
 		el: $('#ranktoolapp'),
@@ -22,13 +23,18 @@ $(function() {
 				url: 'http://jira.freewheel.tv/rest/api/2/field',
 				contentType: 'application/json'
 			}).done(function(fieldarr) {
+				var fieldModels = [];
+
 				for (var i = 0; i < fieldarr.length; ++i) {
 					var fieldrec = fieldarr[i];
+					
 					if (fieldrec.name.startsWith("Rank - ")) {
 						console.debug("Got rank field " + fieldrec.name);
-						rankfields.add({id:fieldrec.id, queryid:fieldrec.clauseNames[0], name:fieldrec.name});
+						fieldModels.push(new RankField({id:fieldrec.id, queryid:fieldrec.clauseNames[0], name:fieldrec.name}));
 					}
 				}
+				
+				rankfields.reset(fieldModels);
 			});
 		},
 		
@@ -151,6 +157,11 @@ $(function() {
 			});
 
 			oppCandidatesView.on('opp_add', this.registerCandidateOpp, this);
+			
+			oppInputView.rankFieldsCollection = rankfields;
+			oppInputView.listenTo(rankfields, 'reset', function() {
+				oppInputView.setupTypeahead(rankfields)
+			});
 
 			var ctx = this;
 			var modal = $("div#save_confirm_modal");
