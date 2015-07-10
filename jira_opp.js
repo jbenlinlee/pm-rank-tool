@@ -229,14 +229,15 @@ var OPPInputView = Backbone.View.extend({
 		});
 	},
 	
+	clearModelOnBlank: function() {
+		if (this.$el.val() === "") {
+			this.model.reset();
+		}
+	},
+	
 	getInputOPP: function() {
 		var oppkey = this.$el.val();
 		this.trigger('opp_search_changed', oppkey);
-		
-		if (oppkey === "") {
-			this.model.reset();
-			return;
-		}
 		
 		var model = this.model;
 		var ctx = this;
@@ -320,6 +321,10 @@ var OPPInputView = Backbone.View.extend({
 			}
 		});
 	},
+	
+	events: {
+		"input": "clearModelOnBlank"
+	}
 });
 
 OPPCandidateListView = Backbone.View.extend({
