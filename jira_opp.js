@@ -230,10 +230,6 @@ var OPPInputView = Backbone.View.extend({
 	},
 	
 	getInputOPP: function() {
-		if (this.lastTime) {
-			clearTimeout(this.lastTime);
-		}
-	
 		var oppkey = this.$el.val();
 		this.trigger('opp_search_changed', oppkey);
 		
@@ -245,43 +241,41 @@ var OPPInputView = Backbone.View.extend({
 		var model = this.model;
 		var ctx = this;
 
-		this.lastTime = setTimeout(function() {
-			var opts = undefined;
-			if (Number.isInteger(parseInt(oppkey, 10))) {
-				$.ajax({
-					type: 'GET',
-					url: 'http://jira.freewheel.tv/rest/api/2/issue/OPP-' + oppkey,
-					contentType: 'application/json'
-				}).done(function(issueData) {
-					model.reset([ctx.makeOPPModel(issueData)]);
-				}).fail(function(xhr, status, error) {
-					console.log("Failed with status " + xhr.status);
-					model.reset();
-				});
-			} else {
-				var postData = {
-					"jql": 'project=OPP and (description~"' + oppkey + '" or summary~"' + oppkey + '") and status not in ("Scheduled", "Ready to be Scheduled", "Declined", "Deferred", "Complete") order by createdDate desc'
-				}
-				
-				$.ajax({
-					type: 'POST',
-					url: 'http://jira.freewheel.tv/rest/api/2/search',
-					contentType: 'application/json',
-					data: JSON.stringify(postData)
-				}).done(function(issueResults) {
-					var opps = [];
-					for (var i = 0; i < issueResults.issues.length; ++i) {
-						var issueData = issueResults.issues[i];
-						opps.push(ctx.makeOPPModel(issueData));
-					}
-
-					model.reset(opps);
-				}).fail(function(xhr, status, error) {
-					console.log("Failed with status " + xhr.status);
-					model.reset();
-				});
+		var opts = undefined;
+		if (Number.isInteger(parseInt(oppkey, 10))) {
+			$.ajax({
+				type: 'GET',
+				url: 'http://jira.freewheel.tv/rest/api/2/issue/OPP-' + oppkey,
+				contentType: 'application/json'
+			}).done(function(issueData) {
+				model.reset([ctx.makeOPPModel(issueData)]);
+			}).fail(function(xhr, status, error) {
+				console.log("Failed with status " + xhr.status);
+				model.reset();
+			});
+		} else {
+			var postData = {
+				"jql": 'project=OPP and (description~"' + oppkey + '" or summary~"' + oppkey + '") and status not in ("Scheduled", "Ready to be Scheduled", "Declined", "Deferred", "Complete") order by createdDate desc'
 			}
-		}, 500);	
+			
+			$.ajax({
+				type: 'POST',
+				url: 'http://jira.freewheel.tv/rest/api/2/search',
+				contentType: 'application/json',
+				data: JSON.stringify(postData)
+			}).done(function(issueResults) {
+				var opps = [];
+				for (var i = 0; i < issueResults.issues.length; ++i) {
+					var issueData = issueResults.issues[i];
+					opps.push(ctx.makeOPPModel(issueData));
+				}
+
+				model.reset(opps);
+			}).fail(function(xhr, status, error) {
+				console.log("Failed with status " + xhr.status);
+				model.reset();
+			});
+		}
 	},
 	
 	setupTypeahead: function(rankFieldCollection) {
@@ -315,14 +309,17 @@ var OPPInputView = Backbone.View.extend({
 	initialize: function() {
 		// this.listenTo(this.rankFieldCollection, 'reset', this.setupTypeahead);
 		
+		var ctx = this;
 		this.$el.bind('typeahead:select', function(evt, suggestion) {
 			console.log(suggestion);
+			
+			switch(suggestion.suggestionType) {
+			case "textSearch":
+				ctx.getInputOPP();
+				break;
+			}
 		});
 	},
-	
-	events: {
-		"input": "getInputOPP"
-	}
 });
 
 OPPCandidateListView = Backbone.View.extend({
