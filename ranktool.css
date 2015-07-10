@@ -167,10 +167,9 @@ span.twitter-typeahead {
 	padding: 7px 14px;
 }
 
-.tt-dataset {
+.tt-dataset-header {
 	color: #C0C0C0;
 	border-top: solid 1px #DDDDDD;
-	margin-bottom: 1em;
 }
 
 .tt-suggestion {

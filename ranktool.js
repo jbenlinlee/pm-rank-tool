@@ -10,6 +10,8 @@ $(function() {
 	
 	var rankfields = new RankFieldCollection();
 	var rankfieldSelectView = new RankFieldSelectView({model: rankfields, el: $("div#opp_rank_tools")});
+	
+	var favoriteFilters = new JiraFilterCollection();
 
 	var oppInputView = new OPPInputView({model: oppCandidates});
 		
@@ -38,11 +40,31 @@ $(function() {
 			});
 		},
 		
+		getFavoriteFilters: function() {
+			$.ajax({
+				type: 'GET',
+				url: 'http://jira.freewheel.tv/rest/api/2/filter/favourite',
+				contentType: 'application/json'
+			}).done(function(filterArray) {
+				var filterModels = [];
+				
+				for (var i = 0; i < filterArray.length; ++i) {
+					var filter = filterArray[i];
+					
+					console.debug("Got favorite filter " + filter.name);
+					filterModels.push(new JiraFilter({id:filter.id, url:filter.self, name:filter.name, description:filter.description}));
+				}
+				
+				favoriteFilters.reset(filterModels);
+			});
+		},
+		
 		checkUserValidation: function() {
 			if (user.hasChanged("validated") && user.get("validated")) {
 				console.log("User is validated!");
 				userview.render();
 				this.getCustomFields();
+				this.getFavoriteFilters();
 			}
 		},
 		
@@ -160,8 +182,11 @@ $(function() {
 			
 			oppInputView.rankFieldsCollection = rankfields;
 			oppInputView.listenTo(rankfields, 'reset', function() {
-				oppInputView.setupTypeahead(rankfields)
+				oppInputView.setupTypeahead(rankfields, favoriteFilters);
 			});
+			oppInputView.listenTo(favoriteFilters, 'reset', function() {
+				oppInputView.setupTypeahead(rankfields, favoriteFilters);
+			})
 
 			var ctx = this;
 			var modal = $("div#save_confirm_modal");

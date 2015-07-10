@@ -208,7 +208,31 @@ function rankFieldBloodhound(rankFieldCollection) {
 	return new Bloodhound({
 		local: rankFieldSuggestions,
 		queryTokenizer: Bloodhound.tokenizers.whitespace,
-		datumTokenizer: function(rankFieldSuggestion) { return rankFieldSuggestion.data.get("name").split(' ') }
+		datumTokenizer: function(rankFieldSuggestion) { return rankFieldSuggestion.data.get("name").split(' '); }
+	});
+}
+
+function filterBloodhound(filterCollection) {
+	var filterSuggestions = [];
+	filterCollection.forEach(function(filterModel, idx, list) {
+		filterSuggestions.push({suggestionType: "filter", data: filterModel});
+	});
+	
+	return new Bloodhound({
+		local: filterSuggestions,
+		queryTokenizer: Bloodhound.tokenizers.whitespace,
+		datumTokenizer: function(filterSuggestion) { return filterSuggestion.data.get("name").split(' '); }
+	});
+}
+
+function makeJQLRequest(queryText) {
+	var postData = {jql: queryText};
+	
+	return $.ajax({
+		type: 'POST',
+		url: 'http://jira.freewheel.tv/rest/api/2/search',
+		contentType: 'application/json',
+		data: JSON.stringify(postData)
 	});
 }
 
@@ -237,6 +261,27 @@ var OPPInputView = Backbone.View.extend({
 		}
 	},
 	
+	getOppsByRank: function(rankFieldModel) {
+		var rankFieldQueryId = rankFieldModel.get("queryid");
+		var query = 'project = OPP and ' + rankFieldQueryId + ' is not EMPTY order by ' + rankFieldQueryId + ' ASC';
+		var model = this.model;
+		
+		var ctx = this;
+		
+		makeJQLRequest(query).done(function(issueResults) {
+			var opps = [];
+			for (var i = 0; i < issueResults.issues.length; ++i) {
+				var issueData = issueResults.issues[i];
+				opps.push(ctx.makeOPPModel(issueData));
+			}
+			
+			model.reset(opps);
+		}).fail(function(xhr, status, error) {
+			console.log("Failed with status " + xhr.status);
+			model.reset();
+		});
+	},
+	
 	getInputOPP: function() {
 		var oppkey = this.$el.val();
 		
@@ -256,16 +301,9 @@ var OPPInputView = Backbone.View.extend({
 				model.reset();
 			});
 		} else {
-			var postData = {
-				"jql": 'project=OPP and (description~"' + oppkey + '" or summary~"' + oppkey + '") and status not in ("Scheduled", "Ready to be Scheduled", "Declined", "Deferred", "Complete") order by createdDate desc'
-			}
-			
-			$.ajax({
-				type: 'POST',
-				url: 'http://jira.freewheel.tv/rest/api/2/search',
-				contentType: 'application/json',
-				data: JSON.stringify(postData)
-			}).done(function(issueResults) {
+			var query = 'project=OPP and (description~"' + oppkey + '" or summary~"' + oppkey + '") and status not in ("Scheduled", "Ready to be Scheduled", "Declined", "Deferred", "Complete") order by createdDate desc';
+
+			makeJQLRequest(query).done(function(issueResults) {
 				var opps = [];
 				for (var i = 0; i < issueResults.issues.length; ++i) {
 					var issueData = issueResults.issues[i];
@@ -280,7 +318,9 @@ var OPPInputView = Backbone.View.extend({
 		}
 	},
 	
-	setupTypeahead: function(rankFieldCollection) {
+	setupTypeahead: function(rankFieldCollection, filterCollection) {
+		this.$el.typeahead('destroy');
+		
 		this.$el.typeahead({
 			minLength: 1,
 			hint: false
@@ -291,7 +331,16 @@ var OPPInputView = Backbone.View.extend({
 			source: rankFieldBloodhound(rankFieldCollection),
 			display: function(rankFieldSuggestion) { return rankFieldSuggestion.data.get("name").substring(7); },
 			templates: {
-				header: 'Rank Fields',
+				header: '<div class="tt-dataset-header">Rank Fields</div>',
+			}
+		},
+		{
+			name: 'filters',
+			async: false,
+			source: filterBloodhound(filterCollection),
+			display: function(filterSuggestion) { return filterSuggestion.data.get("name"); },
+			templates: {
+				header: '<div class="tt-dataset-header">Filters</div>'
 			}
 		},
 		{
@@ -302,7 +351,7 @@ var OPPInputView = Backbone.View.extend({
 			},
 			display: function(querySuggestion) { return querySuggestion.data },
 			templates: {
-				header: 'Jira Search'
+				header: '<div class="tt-dataset-header">Jira Search</div>'
 			}
 		}
 		);		
@@ -318,6 +367,9 @@ var OPPInputView = Backbone.View.extend({
 			switch(suggestion.suggestionType) {
 			case "textSearch":
 				ctx.getInputOPP();
+				break;
+			case "rank":
+				ctx.getOppsByRank(suggestion.data);
 				break;
 			}
 		});
