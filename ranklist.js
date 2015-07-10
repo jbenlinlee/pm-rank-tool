@@ -73,7 +73,7 @@ OPPRankListView = Backbone.View.extend({
 var RankFieldSelectView = Backbone.View.extend({
 	render: function() {
 		var select = this.$el.find("select#rank_field_select");
-		select.html("");
+		select.html('<option value="" disabled selected>Select Rank Field</option>');
 		this.model.forEach(function(rankfieldModel, idx, list) {
 			select.append('<option id="' + rankfieldModel.id + '" value="' + rankfieldModel.id + '">' + rankfieldModel.get("name") + '</option>');
 		});

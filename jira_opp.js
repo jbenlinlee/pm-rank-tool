@@ -290,7 +290,7 @@ var OPPInputView = Backbone.View.extend({
 			source: rankFieldBloodhound(rankFieldCollection),
 			display: function(rankFieldModel) { return rankFieldModel.get("name").substring(7); },
 			templates: {
-				header: '<b>Rank Fields</b>',
+				header: 'Rank Fields',
 			}
 		},
 		{
@@ -300,7 +300,7 @@ var OPPInputView = Backbone.View.extend({
 				syncResults([query]);
 			},
 			templates: {
-				header: '<b>Jira Search</b>'
+				header: 'Jira Search'
 			}
 		}
 		);		
