@@ -230,6 +230,8 @@ var OPPInputView = Backbone.View.extend({
 	},
 	
 	clearModelOnBlank: function() {
+		this.trigger('opp_search_changed', this.$el.val());
+		
 		if (this.$el.val() === "") {
 			this.model.reset();
 		}
@@ -237,7 +239,6 @@ var OPPInputView = Backbone.View.extend({
 	
 	getInputOPP: function() {
 		var oppkey = this.$el.val();
-		this.trigger('opp_search_changed', oppkey);
 		
 		var model = this.model;
 		var ctx = this;
@@ -337,7 +338,7 @@ OPPCandidateListView = Backbone.View.extend({
 			list.hide();
 		}
 		else if (this.model.length === 0) {
-			list.html("No results").show();
+			list.hide();
 		} else {
 			list.html("").show();
 
