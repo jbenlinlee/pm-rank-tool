@@ -349,7 +349,8 @@ var OPPInputView = Backbone.View.extend({
 			source: rankFieldBloodhound(rankFieldCollection),
 			display: function(rankFieldSuggestion) { return rankFieldSuggestion.data.get("name").substring(7); },
 			templates: {
-				header: '<div class="tt-dataset-header">Rank Fields</div>',
+				header: '<div class="tt-dataset-header"><span class="glyphicon glyphicon-sort-by-attributes-alt"></span> Rank Fields</div>',
+				footer: '<div class="tt-dataset-footer"></div>'
 			}
 		},
 		{
@@ -358,7 +359,8 @@ var OPPInputView = Backbone.View.extend({
 			source: filterBloodhound(filterCollection),
 			display: function(filterSuggestion) { return filterSuggestion.data.get("name"); },
 			templates: {
-				header: '<div class="tt-dataset-header">Filters</div>'
+				header: '<div class="tt-dataset-header"><span class="glyphicon glyphicon-heart"></span> Filters</div>',
+				footer: '<div class="tt-dataset-footer"></div>'
 			}
 		},
 		{
@@ -369,7 +371,8 @@ var OPPInputView = Backbone.View.extend({
 			},
 			display: function(querySuggestion) { return querySuggestion.data },
 			templates: {
-				header: '<div class="tt-dataset-header">Jira Search</div>'
+				header: '<div class="tt-dataset-header"><span class="glyphicon glyphicon-search"></span> Jira Search</div>',
+				footer: '<div class="tt-dataset-footer"></div>'
 			}
 		}
 		);		
