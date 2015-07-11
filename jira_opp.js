@@ -384,6 +384,7 @@ var OPPInputView = Backbone.View.extend({
 		var ctx = this;
 		this.$el.bind('typeahead:select', function(evt, suggestion) {
 			console.log(suggestion);
+			ctx.model.reset();
 			
 			switch(suggestion.suggestionType) {
 			case "textSearch":
