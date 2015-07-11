@@ -268,7 +268,7 @@ var OPPInputView = Backbone.View.extend({
 		
 		var ctx = this;
 		
-		makeJQLRequest(query).done(function(issueResults) {
+		return makeJQLRequest(query).done(function(issueResults) {
 			var opps = [];
 			for (var i = 0; i < issueResults.issues.length; ++i) {
 				var issueData = issueResults.issues[i];
@@ -286,7 +286,7 @@ var OPPInputView = Backbone.View.extend({
 		var query = filterModel.get("jql");
 		var ctx = this;
 		
-		makeJQLRequest(query).done(function(issueResults) {
+		return makeJQLRequest(query).done(function(issueResults) {
 			var opps = [];
 			for (var i = 0; i < issueResults.issues.length; ++i) {
 				var issueData = issueResults.issues[i];
@@ -308,7 +308,7 @@ var OPPInputView = Backbone.View.extend({
 
 		var opts = undefined;
 		if (Number.isInteger(parseInt(oppkey, 10))) {
-			$.ajax({
+			return $.ajax({
 				type: 'GET',
 				url: 'http://jira.freewheel.tv/rest/api/2/issue/OPP-' + oppkey,
 				contentType: 'application/json'
@@ -321,7 +321,7 @@ var OPPInputView = Backbone.View.extend({
 		} else {
 			var query = 'project=OPP and (description~"' + oppkey + '" or summary~"' + oppkey + '") and status not in ("Scheduled", "Ready to be Scheduled", "Declined", "Deferred", "Complete") order by createdDate desc';
 
-			makeJQLRequest(query).done(function(issueResults) {
+			return makeJQLRequest(query).done(function(issueResults) {
 				var opps = [];
 				for (var i = 0; i < issueResults.issues.length; ++i) {
 					var issueData = issueResults.issues[i];
@@ -381,21 +381,33 @@ var OPPInputView = Backbone.View.extend({
 	initialize: function() {
 		// this.listenTo(this.rankFieldCollection, 'reset', this.setupTypeahead);
 		
+		var statusDiv = this.$el.parent().find('div#input-status');
+		statusDiv.hide();
+		
 		var ctx = this;
+		
 		this.$el.bind('typeahead:select', function(evt, suggestion) {
 			console.log(suggestion);
 			ctx.model.reset();
+			statusDiv.show();
+			var action = undefined;
 			
 			switch(suggestion.suggestionType) {
 			case "textSearch":
-				ctx.getInputOPP();
+				action = ctx.getInputOPP();
 				break;
 			case "rank":
-				ctx.getOppsByRank(suggestion.data);
+				action = ctx.getOppsByRank(suggestion.data);
 				break;
 			case "filter":
-				ctx.getOppsByFilter(suggestion.data);
+				action = ctx.getOppsByFilter(suggestion.data);
 			}
+			
+			var doneAction = function() {
+				statusDiv.hide();
+			}
+			
+			action.then(doneAction, doneAction);
 		});
 	},
 	

@@ -137,6 +137,28 @@ input#opp_input_key {
 	height: 3em;
 }
 
+div#opp_input {
+	position: relative;
+}
+
+div.input-status {
+	height: 3em;
+	width: 3em;
+	
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	
+	text-align: center;
+	display: table;
+}
+
+div.input-status span.status-indicator {
+	display: table-cell;
+	vertical-align: middle;
+	font-size: 1.5em;
+}
+
 div.opp_row span.label {
 	display: inline-block;  /* Bootstrap style fix */
 }
