@@ -170,11 +170,11 @@ span.twitter-typeahead {
 .tt-dataset-header {
 	color: #C0C0C0;
 	/* border-top: solid 1px #DDDDDD; */
-	/* font-size: 80%; */
+	font-size: 90%;
 }
 
 .tt-dataset {
-	margin-bottom: 1em;
+	margin-bottom: .5em;
 }
 
 .tt-dataset-header span.glyphicon {
@@ -182,7 +182,6 @@ span.twitter-typeahead {
 }
 
 .tt-suggestion {
-	margin-bottom: 3px;
 	margin-left: 1.25em;
 	color: #000000;
 }
