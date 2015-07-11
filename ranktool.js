@@ -52,7 +52,7 @@ $(function() {
 					var filter = filterArray[i];
 					
 					console.debug("Got favorite filter " + filter.name);
-					filterModels.push(new JiraFilter({id:filter.id, url:filter.self, name:filter.name, description:filter.description}));
+					filterModels.push(new JiraFilter({id:filter.id, url:filter.self, jql:filter.jql, name:filter.name, description:filter.description}));
 				}
 				
 				favoriteFilters.reset(filterModels);

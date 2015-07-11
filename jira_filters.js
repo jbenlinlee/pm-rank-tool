@@ -3,6 +3,7 @@ var JiraFilter = Backbone.Model.extend({
 		return {
 			id: 0,
 			url: undefined,
+			jql: undefined,
 			name: undefined,
 			description: undefined
 		}

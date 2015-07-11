@@ -282,6 +282,24 @@ var OPPInputView = Backbone.View.extend({
 		});
 	},
 	
+	getOppsByFilter: function(filterModel) {
+		var query = filterModel.get("jql");
+		var ctx = this;
+		
+		makeJQLRequest(query).done(function(issueResults) {
+			var opps = [];
+			for (var i = 0; i < issueResults.issues.length; ++i) {
+				var issueData = issueResults.issues[i];
+				opps.push(ctx.makeOPPModel(issueData));
+			}
+			
+			ctx.model.reset(opps);
+		}).fail(function(xhr, status, error) {
+			console.log("Failed with status " + xhr.status);
+			ctx.model.reset();
+		});
+	},
+	
 	getInputOPP: function() {
 		var oppkey = this.$el.val();
 		
@@ -371,6 +389,8 @@ var OPPInputView = Backbone.View.extend({
 			case "rank":
 				ctx.getOppsByRank(suggestion.data);
 				break;
+			case "filter":
+				ctx.getOppsByFilter(suggestion.data);
 			}
 		});
 	},
