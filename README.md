@@ -5,7 +5,7 @@ A tool for drag and drop creation of Jira ranks
 1. Unpack the zipball
 1. Go to chrome://extensions and check the box to enable developer mode
 1. Still on the chrome://extensions page, click "Load unpacked extension..." and point it to the location of the unpacked zipball
-1. Click "Launch"
+1. Click "Launch" on the "PM Rank Tool" entry
 
 ## Running
 1. Click "Launch" on the app entry from chrome://extensions
@@ -14,6 +14,7 @@ A tool for drag and drop creation of Jira ranks
 ## Using
 ### Authentication
 PM Rank Tool uses Jira session cookies (partially) for authentication. Best practice is:
+
 1. Log into Jira from your browser
 1. Launch PM Rank Tool
 1. Enter your username and password if asked. PM Rank Tool will auto-submit if you pause long enough
@@ -27,6 +28,7 @@ PM Rank Tool uses Jira session cookies (partially) for authentication. Best prac
 
 ### Searching
 There are three search options. Just start typing and the dropdown menu will show you your search options.
+
 1. Fulltext (title, description, summary)  and issue ID search
   1. If you search on a number, PM Rank Tool will search for OPP-<number>
 1. Favorite filter
