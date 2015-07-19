@@ -6,7 +6,7 @@ body {
 div.listpanel {
 	position: relative;
 	margin-bottom: 1em;
-	padding: 1em 1em 2.5em;
+	padding: 1em 1em 0em;
 }
 
 div.listpanel div.listpanel-tools {
@@ -112,7 +112,7 @@ div.opp_insert {
 }
 
 div.opp_list {
-	margin-top: 1.5em;
+	/* margin-top: 1.5em; */
 	padding: 0.25em 0em;
 	
 	border-style: solid;
