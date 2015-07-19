@@ -475,6 +475,7 @@ OPPCandidateListView = Backbone.View.extend({
 		var ctx = this;
 		addAllButton.click(function(evt) {
 			ctx.trigger('opp_add', ctx.model.models);
+			ctx.model.reset();
 		});
 	},
 });
