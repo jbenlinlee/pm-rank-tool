@@ -413,7 +413,7 @@ OPPCandidateListView = Backbone.View.extend({
 				list.append(oppview.render().el);
 			
 				oppview.on('opp_add', function(opp_model) {
-					this.trigger('opp_add', opp_model);
+					this.trigger('opp_add', [opp_model]);
 				}, this);
 			}
 		}
