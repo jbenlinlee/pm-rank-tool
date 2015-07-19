@@ -421,14 +421,18 @@ OPPCandidateListView = Backbone.View.extend({
 	
 	render: function() {
 		list = this.$el.find("div#list");
+		tools = this.$el.find("div#opp_candidates_tools");
 		
 		if (this.oppkey === "") {
 			list.hide();
+			tools.hide();
 		}
 		else if (this.model.length === 0) {
 			list.hide();
+			tools.hide();
 		} else {
 			list.html("").show();
+			tools.show();
 
 			for (var i = 0; i < this.model.length; ++i) {
 				var oppview = new OPPView({model: this.model.at(i)});
@@ -445,7 +449,10 @@ OPPCandidateListView = Backbone.View.extend({
 	
 	initialize: function() {
 		var list = this.$el.find("div#list");
+		var tools = this.$el.find("div#opp_candidates_tools");
+		
 		list.hide();
+		tools.hide();
 				
 		this.listenTo(this.model, "reset", function() {
 			console.debug("opp candidate collection reset");
@@ -460,8 +467,14 @@ OPPCandidateListView = Backbone.View.extend({
 			this.$el.find("div#list").append(oppview.render().el).show();
 			
 			oppview.on('opp_add', function(opp_model) {
-				this.trigger('opp_add', opp_model);
+				this.trigger('opp_add', [opp_model]);
 			}, this)
+		});
+		
+		var addAllButton = tools.find("button#addAllBtn");
+		var ctx = this;
+		addAllButton.click(function(evt) {
+			ctx.trigger('opp_add', ctx.model.models);
 		});
 	},
 });

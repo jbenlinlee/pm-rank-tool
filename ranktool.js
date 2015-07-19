@@ -68,9 +68,16 @@ $(function() {
 			}
 		},
 		
-		registerCandidateOpp: function(opp_model) {
-			console.log('Got add request for ' + [opp_model.id, opp_model.get("title")].join('/'));
-			oppRanks.add(opp_model);
+		registerCandidateOpp: function(opp_model_array) {
+			var currentRanks = oppRanks.models;
+		
+			for (var i = 0; i < opp_model_array.length; ++i) {
+				var opp_model = opp_model_array[i];
+				console.log('Got add request for ' + [opp_model.id, opp_model.get("title")].join('/'));
+				currentRanks.push(opp_model);
+			}
+			
+			oppRanks.reset(currentRanks);
 		},
 		
 		setRanksHelper: function(rankfield_model, rankedOpps, nextRank, numRanksToSet) {
