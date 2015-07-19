@@ -19,60 +19,32 @@ var OPPView = Backbone.View.extend({
 	rank_buttons: false,
 	rank: 0,
 	
-	statusToLabel: function(status) {
-		switch(status.toUpperCase()) {
-		case "BACKLOG":
-			return "success";
-			break;
-		case "SUBMITTED TO PM":
-			return "success";
-			break;
-		case "FUNCTIONAL DESIGN IN PROGRESS":
-			return "success";
-			break;
-		case "FUNCTIONAL DESIGN REVIEW":
-			return "success";
-			break;
-		case "READY FOR TECHNICAL APPROACH":
-			return "success";
-			break;
-		case "TECHNICAL APPROACH IN PROGRESS":
-			return "warning";
-			break;
-		case "TECHNICAL APPROACH REVIEW":
-			return "warning";
-			break;
-		case "READY FOR TECHNICAL DESIGN":
-			return "warning";
-			break;
-		case "TECHNICAL DESIGN IN PROGRESS":
-			return "warning";
-			break;
-		case "TECHNICAL DESIGN REVIEW":
-			return "warning";
-			break;
-		case "READY TO BE SCHEDULED":
-			return "warning";
-			break;
-		case "SCHEDULED":
-			return "danger";
-			break;	
-		case "READY FOR UAT":
-			return "danger";
-			break;
-		case "COMPLETE":
-			return "danger";
-			break;
-		case "DECLINED":
-			return "danger";
-			break;
-		case "DEFERRED":
-			return "danger";
-			break;
-		default:
-			return "default"
-			break;
-		}
+	statusLabelMap: {
+		"BACKLOG": "success",
+		"SUBMITTED TO PM": "success",
+		"FUNCTIONAL DESIGN IN PROGRESS": "success",
+		"FUNCTIONAL DESIGN REVIEW": "success",
+		"SPEC IN PROGRESS": "success",
+		"SPEC READY": "success",
+		"APPROACH IN PROGRESS": "success",
+		"APPROACH READY": "warning",
+		"TECH DESIGN READY": "warning",
+		"READY FOR TECHNICAL APPROACH": "success",
+		"TECHNICAL APPROACH IN PROGRESS": "warning",
+		"TECHNICAL APPROACH REVIEW": "warning",
+		"READY FOR TECHNICAL DESIGN": "warning",
+		"TECHNICAL DESIGN IN PROGRESS": "warning",
+		"TECH DESIGN IN PROGRESS": "warning",
+		"TECHNICAL DESIGN REVIEW": "warning",
+		"TECH DESIGN REVIEW": "warning",
+		"READY TO BE SCHEDULED": "warning",
+		"SCHEDULED": "danger",
+		"IN DEVELOPMENT": "danger",
+		"READY FOR UAT": "danger",
+		"COMPLETE": "danger",
+		"DECLINED": "danger",
+		"DEFERRED": "danger",
+		"CLOSED": "danger"
 	},
 	
 	holdForRemoveTimeout: undefined,
@@ -125,7 +97,7 @@ var OPPView = Backbone.View.extend({
 
 		// Adjust status label color
 		var el_status = row.find("div.opp_status > span.label");
-		el_status.addClass("label-" + this.statusToLabel(model.get("status")));
+		el_status.addClass("label-" + (this.statusLabelMap[model.get("status").toUpperCase()] || "default"));
 		
 		var tools = row.find('div#tools');
 		
