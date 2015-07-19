@@ -82,6 +82,8 @@ var RankFieldSelectView = Backbone.View.extend({
 	initialize: function() {
 		var select = this.$el.find("select#rank_field_select");
 		var saveBtn = this.$el.find("button#saveRankBtn");
+		var clearBtn = this.$el.find("button#clearRankBtn");
+		
 		var rankCollection = this.model;
 		var selectField = undefined;
 
@@ -102,6 +104,10 @@ var RankFieldSelectView = Backbone.View.extend({
 			if (selectField != undefined) {
 				ctx.trigger("rank_save", selectField);
 			}
+		});
+		
+		clearBtn.click(function(evt) {
+			ctx.trigger("rank_clear");
 		});
 	}
 });

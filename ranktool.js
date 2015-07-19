@@ -215,6 +215,11 @@ $(function() {
 				modal.modal('show');
 			});
 			
+			this.listenTo(rankfieldSelectView, "rank_clear", function() {
+				console.debug("Clearing ranks");
+				oppRanks.reset();
+			});
+			
 			user.validate();
 
 		},
