@@ -30,16 +30,20 @@ PM Rank Tool uses Jira session cookies (partially) for authentication. Best prac
 There are three search options. Just start typing and the dropdown menu will show you your search options.
 
 1. Fulltext (title, description, summary)  and issue ID search
-  1. If you search on a number, PM Rank Tool will search for OPP-<number>
+  1. If you search on a number, PM Rank Tool will search for a Jira issue with key OPP-<number>
 1. Favorite filter
 1. Rank field
 
-### Organizing your rank list
-Just drag and drop until things are in the order you want. When you commit, PM Rank Tool
+### Organizing your working rank list
+To _reorder OPPs_ in your working rank list, just drag and drop until things are in the order you want.
+
+When you commit, PM Rank Tool
 will clear the selected rank field and then set the rank field for your selected issues.
 Issue ranks are set starting from 1 and increment by 1.
 
-To remove an OPP from your rank list, click on the OPP you want to remove and hold the
+To _remove an OPP_ from your working rank list, click on the OPP you want to remove and hold the
 mouse button down until the OPP disappears.
 
-To clear your rank list, simply commit an empty rank list.
+To _remove all OPPs_ from your working rank list, click "Clear"
+
+To _clear your rank list in Jira_, simply commit an empty working rank list.
