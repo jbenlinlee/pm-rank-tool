@@ -291,7 +291,7 @@ var OPPInputView = Backbone.View.extend({
 				model.reset();
 			});
 		} else {
-			var query = 'project=OPP and (description~"' + oppkey + '" or summary~"' + oppkey + '") and status not in ("Scheduled", "Ready to be Scheduled", "Declined", "Deferred", "Complete") order by createdDate desc';
+			var query = 'project=OPP and (issuekey="' + oppkey + '" or description~"' + oppkey + '" or summary~"' + oppkey + '") and status not in ("Scheduled", "Ready to be Scheduled", "Declined", "Deferred", "Complete", "Closed") order by createdDate desc';
 
 			return makeJQLRequest(query).done(function(issueResults) {
 				var opps = [];
