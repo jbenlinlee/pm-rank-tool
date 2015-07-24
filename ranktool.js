@@ -186,6 +186,7 @@ $(function() {
 			});
 
 			oppCandidatesView.on('opp_add', this.registerCandidateOpp, this);
+			oppInputView.on('opp_add', this.registerCandidateOpp, this);
 			
 			oppInputView.rankFieldsCollection = rankfields;
 			oppInputView.listenTo(rankfields, 'reset', function() {

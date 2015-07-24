@@ -208,6 +208,27 @@ function makeJQLRequest(queryText) {
 	});
 }
 
+function oppDirectSource() {
+	var lastUpdateTimer = undefined;
+	
+	return function(query, syncResults, asyncResults) {
+		if (query.search(/^(OPP-)?(\d+)$/i) != -1) {
+			var queryStr = (query.search(/^OPP-/i) == - 1 ? "OPP-" : "") + query;
+		
+			clearTimeout(lastUpdateTimer);
+			
+			lastUpdateTimer = setTimeout(function() {
+				makeJQLRequest("issuekey=" + queryStr).done(function(results) {
+					if (results.issues.length > 0) {
+						var opp = results.issues[0];
+						asyncResults([{suggestionType: "direct", data: {summary: opp.fields.summary, key: opp.key}}]);
+					}
+				});
+			}, 250);
+		}
+	}
+}
+
 var OPPInputView = Backbone.View.extend({
 	el: $("input#opp_input_key"),
 	
@@ -291,7 +312,7 @@ var OPPInputView = Backbone.View.extend({
 				model.reset();
 			});
 		} else {
-			var query = 'project=OPP and (issuekey="' + oppkey + '" or description~"' + oppkey + '" or summary~"' + oppkey + '") and status not in ("Scheduled", "Ready to be Scheduled", "Declined", "Deferred", "Complete", "Closed") order by createdDate desc';
+			var query = 'project=OPP and (description~"' + oppkey + '" or summary~"' + oppkey + '") and status not in ("Scheduled", "Ready to be Scheduled", "Declined", "Deferred", "Complete", "Closed") order by createdDate desc';
 
 			return makeJQLRequest(query).done(function(issueResults) {
 				var opps = [];
@@ -306,6 +327,21 @@ var OPPInputView = Backbone.View.extend({
 				model.reset();
 			});
 		}
+	},
+	
+	directAddOPP: function(key) {
+		var ctx = this;
+		
+		return $.ajax({
+			type: 'GET',
+				url: 'http://jira.freewheel.tv/rest/api/2/issue/' + key,
+				contentType: 'application/json'
+			}).done(function(issueData) {
+				ctx.trigger("opp_add", [ctx.makeOPPModel(issueData)]);
+			}).fail(function(xhr, status, error) {
+				console.log("Failed with status " + xhr.status);
+				model.reset();
+			});
 	},
 	
 	setupTypeahead: function(rankFieldCollection, filterCollection) {
@@ -336,6 +372,16 @@ var OPPInputView = Backbone.View.extend({
 			}
 		},
 		{
+			name: 'opp-direct',
+			async: true,
+			source: oppDirectSource(),
+			display: function(directSuggestion) { return directSuggestion.data.key + ": " + directSuggestion.data.summary; },
+			templates: {
+				header: '<div class="tt-dataset-header"><span class="glyphicon glyphicon-tags"></span> Jira Issue Key</div>',
+				footer: '<div class="tt-dataset-footer"></div>'
+			}
+		},
+		{
 			name: 'jira-search',
 			async: false,
 			source: function(query, syncResults) {
@@ -343,7 +389,7 @@ var OPPInputView = Backbone.View.extend({
 			},
 			display: function(querySuggestion) { return querySuggestion.data },
 			templates: {
-				header: '<div class="tt-dataset-header"><span class="glyphicon glyphicon-search"></span> Jira Search</div>',
+				header: '<div class="tt-dataset-header"><span class="glyphicon glyphicon-search"></span> Jira Description and Summary Search</div>',
 				footer: '<div class="tt-dataset-footer"></div>'
 			}
 		}
@@ -373,6 +419,10 @@ var OPPInputView = Backbone.View.extend({
 				break;
 			case "filter":
 				action = ctx.getOppsByFilter(suggestion.data);
+				break;
+			case "direct":
+				action = ctx.directAddOPP(suggestion.data.key);
+				break;
 			}
 			
 			var doneAction = function() {
