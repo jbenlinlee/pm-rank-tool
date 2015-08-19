@@ -125,10 +125,8 @@ var OPPView = Backbone.View.extend({
 			
 			function handleDragOver(event) {
 				if (ctx.draggingRank < ctx.rank) {
-					console.debug("Dragging down: " + ctx.draggingRank + " -> " + ctx.rank);
 					$(event.target).find("div.opp_insert#place_bottom").show();
 				} else {
-					console.debug("Dragging up: " + ctx.draggingRank + " -> " + ctx.rank);
 					$(event.target).find("div.opp_insert#place_top").show();
 				}
 			}
@@ -159,7 +157,6 @@ var OPPView = Backbone.View.extend({
 				}
 				
 				$(event.target).find("div.opp_insert").hide(); // Hide *all* placeholders
-				
 				event.preventDefault();
 			};
 			
