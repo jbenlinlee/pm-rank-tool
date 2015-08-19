@@ -151,8 +151,14 @@ var OPPView = Backbone.View.extend({
 			this.el.ondrop = function(event) {
 				var dropOpp = event.dataTransfer.getData("text/plain");
 				console.debug("Dropping " + dropOpp + " on " + model.id);
-				ctx.trigger("opp_insertbefore", dropOpp, model.id);
-				$(event.target).find("div.opp_insert").hide();
+				
+				if (ctx.draggingRank > ctx.rank) {
+					ctx.trigger("opp_insertbefore", dropOpp, model.id);
+				} else {
+					ctx.trigger("opp_insertafter", dropOpp, model.id);
+				}
+				
+				$(event.target).find("div.opp_insert").hide(); // Hide *all* placeholders
 				
 				event.preventDefault();
 			};

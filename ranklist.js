@@ -40,7 +40,28 @@ OPPRankListView = Backbone.View.extend({
 				oppcollection.reset(newopparr);
 			}
 		}
-				
+		
+		// Insert source after target
+		function insertAfter(sourceid, targetid) {
+			if (sourceid !== targetid) {
+				var opparr = oppcollection.models;
+				var newopparr = [];
+				var sourceopp = oppcollection.get(sourceid);
+				var targetopp = oppcollection.get(targetid);
+			
+				for (var i = 0; i < opparr.length; ++i) {
+					if (opparr[i] != sourceopp) {
+						newopparr.push(opparr[i]);
+						if (opparr[i] == targetopp) {
+							newopparr.push(sourceopp);
+						}
+					}
+				}
+			
+				oppcollection.reset(newopparr);
+			}
+		}
+			
 		function handleDragStart(oppModel, oppRank) {
 			list_elem.find("div.opp").addClass("dragging");
 			this.trigger('opp_dragstart', oppModel, oppRank);
@@ -66,6 +87,7 @@ OPPRankListView = Backbone.View.extend({
 			});
 			
 			this.listenTo(oppview, 'opp_insertbefore', insertBefore);
+			this.listenTo(oppview, 'opp_insertafter', insertAfter);
 			this.listenTo(oppview, 'opp_dragstart', handleDragStart);
 			this.listenTo(oppview, 'opp_dragend', handleDragEnd);
 			
