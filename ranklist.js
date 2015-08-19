@@ -1,4 +1,6 @@
 OPPRankListView = Backbone.View.extend({
+	childViews: [],
+	
 	render: function() {
 		var list_elem = this.$el.find("div#list");
 		list_elem.html("");
@@ -10,17 +12,28 @@ OPPRankListView = Backbone.View.extend({
 			list_elem.html('<div class="list_placeholder">Empty rank list. Try search for and adding an OPP above.</div>');
 		}
 		
+		// Clear listeners
+		this.childViews.forEach(function(elem, idx, list) {
+			this.stopListening(elem);
+		}, this);
+		
+		this.childViews = [];
+		
 		oppcollection.forEach(function(elem, idx, list) {
 			var oppview = new OPPView({model: elem});
+			
+			this.childViews.push(oppview);
+			
 			oppview.remove_button = true;
 			oppview.rank_buttons = true;
+			oppview.rank = idx;
 			
 			list_elem.append(oppview.render().el);
-			oppview.on('opp_remove', function(opp_model) {
+			this.listenTo(oppview, 'opp_remove', function(opp_model) {
 				oppcollection.remove(opp_model);
-			}, this);
+			});
 			
-			oppview.on('opp_insertbefore', function(sourceid, targetid) {
+			this.listenTo(oppview, 'opp_insertbefore', function(sourceid, targetid) {
 				if (sourceid !== targetid) {
 					var opparr = oppcollection.models;
 					var newopparr = [];
@@ -41,14 +54,16 @@ OPPRankListView = Backbone.View.extend({
 				}
 			});
 			
-			oppview.on('opp_dragstart', function() {
+			this.listenTo(oppview, 'opp_dragstart', function(oppModel, oppRank) {
 				list_elem.find("div.opp").addClass("dragging");
+				console.log("Started dragging rank " + oppRank);
 			});
 			
-			oppview.on('opp_dragend', function() {
+			this.listenTo(oppview, 'opp_dragend', function(oppModel, oppRank) {
 				list_elem.find("div.opp").removeClass("dragging");
+				console.log("Ended dragging rank " + oppRank);
 			});
-		});
+		}, this);
 	},
 	
 	initialize: function() {
