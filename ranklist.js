@@ -70,6 +70,13 @@ OPPRankListView = Backbone.View.extend({
 			this.listenTo(oppview, 'opp_dragend', handleDragEnd);
 			
 			// OPP subviews should also listen to opp_dragstart and opp_dragend to get updates
+			oppview.listenTo(this, 'opp_dragstart', function(oppModel, oppRank) {
+				oppview.draggingRank = oppRank;
+			});
+			
+			oppview.listenTo(this, 'opp_dragend', function(oppModel, oppRank) {
+				oppview.draggingRank = undefined;
+			});
 			
 		}, this);
 	},

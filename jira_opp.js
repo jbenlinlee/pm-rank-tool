@@ -18,6 +18,7 @@ var OPPView = Backbone.View.extend({
 	remove_button: false,
 	rank_buttons: false,
 	rank: 0,
+	draggingRank: undefined,
 	
 	statusLabelMap: {
 		"BACKLOG": "success",
@@ -65,6 +66,7 @@ var OPPView = Backbone.View.extend({
 	},
 	
 	clearHoldRemoveTimeout: function() {
+		console.debug("Clearing hold to remove timeout");
 		clearTimeout(this.holdForRemoveTimeout);
 		clearTimeout(this.holdForRemoveIndicatorTimeout);
 		
@@ -78,8 +80,9 @@ var OPPView = Backbone.View.extend({
 		var model = this.model;
 		var ctx = this;
 		
-		this.$el.append('<div class="opp_insert"></div>');
+		this.$el.append('<div class="opp_insert" id="place_top"></div>');
 		this.$el.append('<div class="opp_row"></div>');
+		this.$el.append('<div class="opp_insert" id="place_bottom"></div>');
 		var row = this.$el.find("div.opp_row");
 		
 		row.append('<div class="opp_cell opp_key opp_textual">' + model.id + '</div>');
@@ -114,19 +117,29 @@ var OPPView = Backbone.View.extend({
 			this.el.ondragstart = function(event) {
 				console.debug("Dragging " + model.id);
 				event.dataTransfer.setData("text/plain", model.id);
-				ctx.trigger("opp_dragstart");
+				ctx.trigger("opp_dragstart", ctx.model, ctx.rank);
 				
 				// Cancel and reset any pending remove action
 				ctx.clearHoldRemoveTimeout();
 			};
 			
+			function handleDragOver(event) {
+				if (ctx.draggingRank < ctx.rank) {
+					console.debug("Dragging down: " + ctx.draggingRank + " -> " + ctx.rank);
+					$(event.target).find("div.opp_insert#place_bottom").show();
+				} else {
+					console.debug("Dragging up: " + ctx.draggingRank + " -> " + ctx.rank);
+					$(event.target).find("div.opp_insert#place_top").show();
+				}
+			}
+			
 			this.el.ondragenter = function(event) {
-				$(event.target).find("div.opp_insert").show();
+				handleDragOver(event);
 				event.preventDefault();
 			};
 
 			this.el.ondragover = function(event) {
-				$(event.target).find("div.opp_insert").show();
+				handleDragOver(event);
 				event.preventDefault();
 			};
 			
@@ -145,7 +158,7 @@ var OPPView = Backbone.View.extend({
 			};
 			
 			this.el.ondragend = function(event) {
-				ctx.trigger("opp_dragend");
+				ctx.trigger("opp_dragend", ctx.model, ctx.rank);
 				event.preventDefault();
 			}
 			
