@@ -19,6 +19,38 @@ OPPRankListView = Backbone.View.extend({
 		
 		this.childViews = [];
 		
+		// Insert source before target
+		function insertBefore(sourceid, targetid) {
+			if (sourceid !== targetid) {
+				var opparr = oppcollection.models;
+				var newopparr = [];
+				var sourceopp = oppcollection.get(sourceid);
+				var targetopp = oppcollection.get(targetid);
+			
+				for (var i = 0; i < opparr.length; ++i) {
+					if (opparr[i] != sourceopp) {
+						if (opparr[i] == targetopp) {
+							newopparr.push(sourceopp);
+						}
+					
+						newopparr.push(opparr[i]);
+					}
+				}
+			
+				oppcollection.reset(newopparr);
+			}
+		}
+				
+		function handleDragStart(oppModel, oppRank) {
+			list_elem.find("div.opp").addClass("dragging");
+			this.trigger('opp_dragstart', oppModel, oppRank);
+		}
+		
+		function handleDragEnd(oppModel, oppRank) {
+			list_elem.find("div.opp").removeClass("dragging");
+			this.trigger('opp_dragend', oppModel, oppRank);
+		}
+		
 		oppcollection.forEach(function(elem, idx, list) {
 			var oppview = new OPPView({model: elem});
 			
@@ -33,36 +65,12 @@ OPPRankListView = Backbone.View.extend({
 				oppcollection.remove(opp_model);
 			});
 			
-			this.listenTo(oppview, 'opp_insertbefore', function(sourceid, targetid) {
-				if (sourceid !== targetid) {
-					var opparr = oppcollection.models;
-					var newopparr = [];
-					var sourceopp = oppcollection.get(sourceid);
-					var targetopp = oppcollection.get(targetid);
-				
-					for (var i = 0; i < opparr.length; ++i) {
-						if (opparr[i] != sourceopp) {
-							if (opparr[i] == targetopp) {
-								newopparr.push(sourceopp);
-							}
-						
-							newopparr.push(opparr[i]);
-						}
-					}
-				
-					oppcollection.reset(newopparr);
-				}
-			});
+			this.listenTo(oppview, 'opp_insertbefore', insertBefore);
+			this.listenTo(oppview, 'opp_dragstart', handleDragStart);
+			this.listenTo(oppview, 'opp_dragend', handleDragEnd);
 			
-			this.listenTo(oppview, 'opp_dragstart', function(oppModel, oppRank) {
-				list_elem.find("div.opp").addClass("dragging");
-				console.log("Started dragging rank " + oppRank);
-			});
+			// OPP subviews should also listen to opp_dragstart and opp_dragend to get updates
 			
-			this.listenTo(oppview, 'opp_dragend', function(oppModel, oppRank) {
-				list_elem.find("div.opp").removeClass("dragging");
-				console.log("Ended dragging rank " + oppRank);
-			});
 		}, this);
 	},
 	
